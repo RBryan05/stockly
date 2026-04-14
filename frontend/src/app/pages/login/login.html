@@ -1,0 +1,30 @@
+<div class="vh-100 d-flex align-items-center justify-content-center fondo-login">
+    <div class="card shadow-lg border-0" style="width: 420px;">
+        <div class="card-header bg-dark text-white text-center py-4">
+            <i class="bi bi-box-seam fs-1"></i>
+            <h4 class="mt-2 mb-0 fw-bold">StockAdmin</h4>
+            <p class="text-secondary mb-0 small">Sistema de Inventario</p>
+        </div>
+        <div class="card-body p-4">
+            <div class="mb-3">
+                <label class="form-label fw-semibold">
+                    <i class="bi bi-person me-1"></i>Usuario
+                </label>
+                <input type="text" class="form-control form-control-lg"
+                    placeholder="Ingresa tu usuario"
+                    [(ngModel)]="usuario" name="usuario"/>
+            </div>
+            <div class="mb-4">
+                <label class="form-label fw-semibold">
+                    <i class="bi bi-lock me-1"></i>Contraseña
+                </label>
+                <input type="password" class="form-control form-control-lg"
+                    placeholder="Ingresa tu contraseña"
+                    [(ngModel)]="password" name="password"/>
+            </div>
+            <button class="btn btn-dark w-100 fw-bold btn-lg" (click)="iniciarSesion()">
+                <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
+            </button>
+        </div>
+    </div>
+</div>
