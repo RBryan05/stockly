@@ -1,0 +1,11 @@
+.fondo-login {
+  background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+}
+
+.card-round {
+  border-radius: 18px !important;
+}
+
+.card-header {
+  border-radius: 15px 15px 0 0 !important;
+}

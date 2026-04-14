@@ -1,0 +1,154 @@
+<div class="container-fluid px-4 mt-4">
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <h3 class="fw-bold">
+                <i class="bi bi-speedometer2 me-2"></i>Dashboard
+            </h3>
+            <p class="text-muted">Resumen general del inventario de productos.</p>
+            <hr>
+        </div>
+    </div>
+
+    <!-- Tarjetas de resumen -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="rounded-3 bg-primary bg-opacity-10 p-3">
+                        <i class="bi bi-box-seam fs-2 text-primary"></i>
+                    </div>
+                    <div>
+                        <p class="text-muted mb-0 small">Total Productos</p>
+                        <h3 class="fw-bold mb-0">{{ totalProductos }}</h3>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-top-0">
+                    <small class="text-muted">Productos registrados</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="rounded-3 bg-success bg-opacity-10 p-3">
+                        <i class="bi bi-tag fs-2 text-success"></i>
+                    </div>
+                    <div>
+                        <p class="text-muted mb-0 small">Categorías</p>
+                        <h3 class="fw-bold mb-0">{{ totalCategorias }}</h3>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-top-0">
+                    <small class="text-muted">Categorías activas</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="rounded-3 bg-danger bg-opacity-10 p-3">
+                        <i class="bi bi-exclamation-triangle fs-2 text-danger"></i>
+                    </div>
+                    <div>
+                        <p class="text-muted mb-0 small">Stock Bajo</p>
+                        <h3 class="fw-bold mb-0">{{ stockBajo }}</h3>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-top-0">
+                    <small class="text-muted">Productos por reabastecer</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="rounded-3 bg-warning bg-opacity-10 p-3">
+                        <i class="bi bi-arrow-left-right fs-2 text-warning"></i>
+                    </div>
+                    <div>
+                        <p class="text-muted mb-0 small">Movimientos Hoy</p>
+                        <h3 class="fw-bold mb-0">{{ movimientosHoy }}</h3>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-top-0">
+                    <small class="text-muted">Entradas y salidas</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Accesos rápidos -->
+    <div class="row g-3">
+        <div class="col-12">
+            <h5 class="fw-semibold">Accesos Rápidos</h5>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-3 bg-primary bg-opacity-10 p-2 me-3">
+                            <i class="bi bi-box fs-4 text-primary"></i>
+                        </div>
+                        <h5 class="card-title mb-0 fw-bold">Productos</h5>
+                    </div>
+                    <p class="card-text text-muted">
+                        Gestiona el catálogo completo de productos del inventario.
+                    </p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <a routerLink="/productos" class="btn btn-primary w-100">
+                        <i class="bi bi-arrow-right me-1"></i>Ver Productos
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-3 bg-success bg-opacity-10 p-2 me-3">
+                            <i class="bi bi-tag fs-4 text-success"></i>
+                        </div>
+                        <h5 class="card-title mb-0 fw-bold">Categorías</h5>
+                    </div>
+                    <p class="card-text text-muted">
+                        Administra las categorías para clasificar los productos.
+                    </p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <a routerLink="/categorias" class="btn btn-success w-100">
+                        <i class="bi bi-arrow-right me-1"></i>Ver Categorías
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-3 bg-warning bg-opacity-10 p-2 me-3">
+                            <i class="bi bi-arrow-left-right fs-4 text-warning"></i>
+                        </div>
+                        <h5 class="card-title mb-0 fw-bold">Movimientos</h5>
+                    </div>
+                    <p class="card-text text-muted">
+                        Registra y consulta entradas y salidas del inventario.
+                    </p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <a routerLink="/stock" class="btn btn-warning w-100">
+                        <i class="bi bi-arrow-right me-1"></i>Ver Movimientos
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

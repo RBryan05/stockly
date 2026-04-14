@@ -1,0 +1,120 @@
+<div class="container-fluid px-4 mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+
+
+            <div class="mb-3 d-flex justify-content-end">
+                <a routerLink="/productos" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-arrow-left me-1"></i>Volver a Productos
+                </a>
+            </div>
+
+
+            <div class="card border-0 shadow-sm mb-5">
+                <div class="card-header bg-dark text-white py-3">
+                    <h5 class="mb-0 fw-bold">
+                        <i class="bi bi-plus-circle me-2"></i>Nuevo Producto
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row g-3">
+
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Código</label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="bi bi-hash"></i>
+                                </span>
+                                <input type="text" class="form-control" placeholder="Ej: P001"
+                                    [(ngModel)]="producto.codigo" name="codigo" />
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Nombre</label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="bi bi-box"></i>
+                                </span>
+                                <input type="text" class="form-control" placeholder="Nombre del producto"
+                                    [(ngModel)]="producto.nombre" name="nombre" />
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Categoría</label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="bi bi-tag"></i>
+                                </span>
+                                <select class="form-select" [(ngModel)]="producto.categoria" name="categoria">
+                                    <option value="">Selecciona una categoría</option>
+                                    @for (cat of categorias; track cat) {
+                                    <option [value]="cat">{{ cat }}</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Stock Inicial</label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="bi bi-layers"></i>
+                                </span>
+                                <input type="number" class="form-control" [(ngModel)]="producto.stock" name="stock"
+                                    min="0" />
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Precio ($)</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" class="form-control" [(ngModel)]="producto.precio" name="precio"
+                                    min="0" step="0.01" />
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Estado</label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="bi bi-toggle-on"></i>
+                                </span>
+                                <select class="form-select" [(ngModel)]="producto.estado" name="estado">
+                                    <option value="Activo">Activo</option>
+                                    <option value="Inactivo">Inactivo</option>
+                                </select>
+                            </div>
+                        </div>
+
+
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Descripción</label>
+                            <textarea class="form-control" rows="3" placeholder="Descripción del producto..."
+                                [(ngModel)]="producto.descripcion" name="descripcion">
+                            </textarea>
+                        </div>
+
+
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent d-flex justify-content-center gap-4 py-3">
+                    <button class="btn btn-primary fw-bold" (click)="guardar()">
+                        <i class="bi bi-floppy me-1"></i>Guardar
+                    </button>
+                    <button class="btn btn-outline-secondary" (click)="cancelar()">
+                        <i class="bi bi-x-lg me-1"></i>Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
