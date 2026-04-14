@@ -1,1 +1,150 @@
-<p>stock-movimientos works!</p>
+<div class="container px-4 mt-4">
+
+
+    <div class="row mb-3">
+        <div class="col">
+            <h3 class="fw-bold">
+                <i class="bi bi-arrow-left-right me-2"></i>Movimientos de Stock
+            </h3>
+            <p class="text-muted mb-0">Registra entradas y salidas del inventario.</p>
+        </div>
+    </div>
+
+
+    <!-- Formulario nuevo movimiento -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-dark text-white py-3">
+            <h6 class="mb-0 fw-bold">
+                <i class="bi bi-plus-circle me-2"></i>Registrar Movimiento
+            </h6>
+        </div>
+        <div class="card-body p-4">
+            <div class="row g-3">
+
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Producto</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="bi bi-box"></i>
+                        </span>
+                        <select class="form-select" [(ngModel)]="nuevoMovimiento.producto" name="producto">
+                            <option value="">Selecciona un producto</option>
+                            @for (p of productos; track p) {
+                            <option [value]="p">{{ p }}</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Tipo</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="bi bi-arrow-down-up"></i>
+                        </span>
+                        <select class="form-select" [(ngModel)]="nuevoMovimiento.tipo" name="tipo">
+                            <option value="Entrada">Entrada</option>
+                            <option value="Salida">Salida</option>
+                        </select>
+                    </div>
+                </div>
+
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Cantidad</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="bi bi-123"></i>
+                        </span>
+                        <input type="number" class="form-control" min="1" [(ngModel)]="nuevoMovimiento.cantidad"
+                            name="cantidad" />
+                    </div>
+                </div>
+
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Responsable</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="bi bi-person"></i>
+                        </span>
+                        <input type="text" class="form-control" placeholder="Nombre del responsable"
+                            [(ngModel)]="nuevoMovimiento.responsable" name="responsable" />
+                    </div>
+                </div>
+
+
+                <div class="col-12">
+                    <label class="form-label fw-semibold">Observación</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="bi bi-chat-text"></i>
+                        </span>
+                        <input type="text" class="form-control" placeholder="Motivo del movimiento"
+                            [(ngModel)]="nuevoMovimiento.observacion" name="observacion" />
+                    </div>
+                </div>
+
+
+                <div class="col-12 text-center">
+                    <button class="btn btn-primary fw-bold px-4" (click)="registrarMovimiento()">
+                        <i class="bi bi-floppy me-1"></i>Registrar
+                    </button>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Historial -->
+    <div class="card border-0 shadow-sm mb-5">
+        <div class="card-header bg-white py-3">
+            <h6 class="mb-0 fw-bold">
+                <i class="bi bi-clock-history me-2"></i>Historial de Movimientos
+            </h6>
+        </div>
+        <div class="card-body p-0 text-center">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Producto</th>
+                        <th>Tipo</th>
+                        <th class="text-center">Cantidad</th>
+                        <th>Responsable</th>
+                        <th>Observación</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (mov of movimientos; track mov.id) {
+                    <tr>
+                        <td>
+                            <i class="bi bi-calendar3 me-1 text-muted"></i>
+                            {{ mov.fecha }}
+                        </td>
+                        <td class="fw-semibold">{{ mov.producto }}</td>
+                        <td>
+                            <span class="badge px-3" [class.bg-success]="mov.tipo === 'Entrada'"
+                                [class.bg-danger]="mov.tipo === 'Salida'">
+                                <i class="bi me-1" [class.bi-box-arrow-in-down]="mov.tipo === 'Entrada'"
+                                    [class.bi-box-arrow-up]="mov.tipo === 'Salida'">
+                                </i>
+                                {{ mov.tipo }}
+                            </span>
+                        </td>
+                        <td class="text-center fw-bold">{{ mov.cantidad }}</td>
+                        <td>{{ mov.responsable }}</td>
+                        <td class="text-muted">{{ mov.observacion }}</td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+</div>
