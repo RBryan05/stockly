@@ -1,15 +1,22 @@
-FROM node:24-bookworm-slim
+FROM node:24-bookworm-slim AS build
 
 WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm ci --only=production
+RUN npm ci
 
 COPY . .
 
-EXPOSE 3000
+RUN npm run build --configuration=production
 
-ENV NODE_ENV=production
+# Etapa 2: Servir con Nginx
+FROM nginx:stable-alpine
 
-CMD ["node", "src/index.js"]
+RUN rm -rf /usr/share/nginx/html/*
+
+COPY --from=build /app/dist/stockly/browser /usr/share/nginx/html
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
