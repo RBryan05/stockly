@@ -7,6 +7,7 @@ const { notFound, errorHandler } = require('./middlewares/errorMiddleware');
 const categoriasRoutes = require('./routes/categorias');
 const productosRoutes = require('./routes/productos');
 const movimientosRoutes = require('./routes/movimientos');
+const authRoutes = require('./routes/auth');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -27,6 +28,7 @@ app.get('/', (req, res) => {
 app.use('/api/v1/categorias', categoriasRoutes);
 app.use('/api/v1/productos', productosRoutes);
 app.use('/api/v1/movimientos', movimientosRoutes);
+app.use('/api/v1/auth', authRoutes); 
 
 app.use(notFound);
 app.use(errorHandler);
