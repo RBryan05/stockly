@@ -11,6 +11,7 @@ const categoriasRoutes = require('./routes/categorias');
 const productosRoutes = require('./routes/productos');
 const movimientosRoutes = require('./routes/movimientos');
 const authRoutes = require('./routes/auth');
+const userRoutes = require('./routes/user.routes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -46,7 +47,7 @@ app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/categorias', verificarToken, categoriasRoutes);
 app.use('/api/v1/productos', verificarToken, productosRoutes);
 app.use('/api/v1/movimientos', verificarToken, movimientosRoutes);
-
+app.use('/api/v1/usuarios', verificarToken, userRoutes);
 
 // ===============================
 //  MANEJO DE ERRORES
