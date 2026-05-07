@@ -1,3 +1,4 @@
+// src/middlewares/errorMiddleware.js
 const notFound = (req, res) => {
   res.status(404).json({ ok: false, message: `Ruta ${req.originalUrl} no encontrada` });
 };
