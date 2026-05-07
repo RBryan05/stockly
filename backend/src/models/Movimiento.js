@@ -1,3 +1,4 @@
+// src/models/Movimiento.js
 const mongoose = require('mongoose');
 
 const movimientoSchema = new mongoose.Schema(

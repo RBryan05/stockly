@@ -1,3 +1,4 @@
+// src/models/Usuario.js
 const mongoose = require('mongoose');
 
 // Definimos el "esquema" (la estructura) del usuario en MongoDB

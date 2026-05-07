@@ -1,3 +1,4 @@
+// src/models/Producto.js
 const mongoose = require('mongoose');
 
 const productoSchema = new mongoose.Schema(

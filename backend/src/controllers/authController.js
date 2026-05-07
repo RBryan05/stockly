@@ -1,3 +1,4 @@
+//src/controllers/authController.js
 const bcrypt = require("bcryptjs");
 const Usuario = require("../models/Usuario");
 const { generateToken } = require("../services/jwt.service");
