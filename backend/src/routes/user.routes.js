@@ -1,3 +1,4 @@
+// src/routes/user.routes.js
 const express = require("express");
 const router = express.Router();
 const { verificarToken } = require("../middlewares/auth.middleware");
