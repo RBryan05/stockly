@@ -21,6 +21,11 @@ const productoSchema = new mongoose.Schema(
       ref: 'Categoria',
       required: [true, 'La categoría es obligatoria'],
     },
+    // Imagen 
+    imagen: {
+      url: { type: String, default: '' },
+      publicId: { type: String, default: '' }, // Para poder eliminarla de Cloudinary
+    }, 
     activo: { type: Boolean, default: true },
   },
   { timestamps: true }
