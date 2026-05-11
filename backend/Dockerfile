@@ -1,15 +1,13 @@
-FROM node:24-bookworm-slim
+FROM node:20-alpine
 
 WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm ci --only=production
+RUN npm install --omit=dev
 
 COPY . .
 
-EXPOSE 3000
+EXPOSE 5000
 
-ENV NODE_ENV=production
-
-CMD ["node", "src/index.js"]
+CMD ["npm", "start"]
