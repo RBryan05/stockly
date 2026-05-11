@@ -1,6 +1,7 @@
 // src/controllers/productosController.js
 const Producto = require('../models/Producto');
 const Categoria = require('../models/Categoria');
+const cloudinary = require('../config/cloudinary');
 
 // GET /api/v1/productos
 const getProductos = async (req, res) => {
@@ -52,18 +53,26 @@ const crearProducto = async (req, res) => {
   try {
     const { nombre, descripcion, precio, stockActual, stockMinimo, categoria } = req.body;
 
-    // Validaciones básicas
     if (!nombre || precio === undefined || !categoria) {
+      // Si se subió imagen pero hay error de validación, eliminarla de Cloudinary
+      if (req.file) {
+        await cloudinary.uploader.destroy(req.file.filename);
+      }
       return res.status(400).json({
         ok: false,
         message: 'nombre, precio y categoria son obligatorios',
       });
     }
 
-    // Verificar que la categoría existe y está activa
     const categoriaExiste = await Categoria.findOne({ _id: categoria, activo: true });
     if (!categoriaExiste) {
-      return res.status(400).json({ ok: false, message: 'La categoría no existe o está inactiva' });
+      if (req.file) {
+        await cloudinary.uploader.destroy(req.file.filename);
+      }
+      return res.status(400).json({
+        ok: false,
+        message: 'La categoría no existe o está inactiva',
+      });
     }
 
     const producto = new Producto({
@@ -73,6 +82,10 @@ const crearProducto = async (req, res) => {
       stockActual: stockActual ?? 0,
       stockMinimo: stockMinimo ?? 5,
       categoria,
+      // Si se subió imagen, guardar URL y publicId
+      imagen: req.file
+        ? { url: req.file.path, publicId: req.file.filename }
+        : { url: '', publicId: '' },
     });
 
     await producto.save();
@@ -80,6 +93,9 @@ const crearProducto = async (req, res) => {
 
     res.status(201).json({ ok: true, message: 'Producto creado exitosamente', data: producto });
   } catch (error) {
+    if (req.file) {
+      await cloudinary.uploader.destroy(req.file.filename);
+    }
     res.status(500).json({ ok: false, message: error.message });
   }
 };
@@ -91,18 +107,25 @@ const actualizarProducto = async (req, res) => {
 
     const producto = await Producto.findById(req.params.id);
     if (!producto) {
+      if (req.file) {
+        await cloudinary.uploader.destroy(req.file.filename);
+      }
       return res.status(404).json({ ok: false, message: 'Producto no encontrado' });
     }
 
-    // Verificar categoría si se cambia
     if (categoria) {
       const categoriaExiste = await Categoria.findOne({ _id: categoria, activo: true });
       if (!categoriaExiste) {
-        return res.status(400).json({ ok: false, message: 'La categoría no existe o está inactiva' });
+        if (req.file) {
+          await cloudinary.uploader.destroy(req.file.filename);
+        }
+        return res.status(400).json({
+          ok: false,
+          message: 'La categoría no existe o está inactiva',
+        });
       }
     }
 
-    // Solo actualizar campos enviados
     if (nombre !== undefined) producto.nombre = nombre.trim();
     if (descripcion !== undefined) producto.descripcion = descripcion;
     if (precio !== undefined) producto.precio = precio;
@@ -110,11 +133,25 @@ const actualizarProducto = async (req, res) => {
     if (categoria !== undefined) producto.categoria = categoria;
     if (activo !== undefined) producto.activo = activo;
 
+    // Si se sube nueva imagen, eliminar la anterior de Cloudinary
+    if (req.file) {
+      if (producto.imagen?.publicId) {
+        await cloudinary.uploader.destroy(producto.imagen.publicId);
+      }
+      producto.imagen = {
+        url: req.file.path,
+        publicId: req.file.filename,
+      };
+    }
+
     await producto.save();
     await producto.populate('categoria', 'nombre');
 
     res.json({ ok: true, message: 'Producto actualizado exitosamente', data: producto });
   } catch (error) {
+    if (req.file) {
+      await cloudinary.uploader.destroy(req.file.filename);
+    }
     res.status(500).json({ ok: false, message: error.message });
   }
 };

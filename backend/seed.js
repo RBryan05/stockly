@@ -11,24 +11,30 @@ const Movimiento = require('./src/models/Movimiento');
 const seedDB = async () => {
   await connectDB();
 
-  // Limpiar todas las colecciones
   await Movimiento.deleteMany();
   await Producto.deleteMany();
   await Categoria.deleteMany();
   await Usuario.deleteMany();
   console.log('Datos anteriores eliminados');
 
-  // Crear usuario admin
   const salt = await bcrypt.genSalt(10);
-  const passwordHash = await bcrypt.hash('Admin1234!', salt);
+
+  // Usuario admin
   await Usuario.create({
     nombre: 'Administrador',
-    email: 'admin@inventario.com',
-    password: passwordHash,
+    email: 'admin@stockly.com',
+    password: await bcrypt.hash('Admin1234!', salt),
+    rol: 'admin',
   });
-  console.log('Usuario admin creado → admin@inventario.com / Admin1234!');
 
-  // Tus categorías originales (sin cambios)
+  // Usuario empleado de prueba
+  await Usuario.create({
+    nombre: 'Empleado Demo',
+    email: 'empleado@stockly.com',
+    password: await bcrypt.hash('Empleado1234!', salt),
+    rol: 'empleado',
+  });
+
   const categorias = await Categoria.insertMany([
     { nombre: 'Electrónica', descripcion: 'Dispositivos electrónicos' },
     { nombre: 'Ropa', descripcion: 'Prendas de vestir' },
@@ -36,7 +42,6 @@ const seedDB = async () => {
     { nombre: 'Hogar', descripcion: 'Artículos para el hogar' },
   ]);
 
-  // Tus productos originales (sin cambios)
   const productos = await Producto.insertMany([
     { nombre: 'Laptop HP 15"', descripcion: 'Intel i5 8GB RAM', precio: 799.99,
       stockActual: 12, stockMinimo: 5, categoria: categorias[0]._id },
@@ -48,7 +53,6 @@ const seedDB = async () => {
       stockActual: 2, stockMinimo: 20, categoria: categorias[2]._id },
   ]);
 
-  // Tus movimientos originales (sin cambios)
   await Movimiento.insertMany([
     { producto: productos[0]._id, tipo: 'entrada', cantidad: 20,
       motivo: 'Compra inicial', stockAnterior: 0, stockResultante: 20 },
@@ -61,7 +65,7 @@ const seedDB = async () => {
   ]);
 
   console.log('Base de datos poblada exitosamente');
-  await mongoose.disconnect(); // ← cierre limpio de conexión
+  await mongoose.disconnect();
   process.exit(0);
 };
 
