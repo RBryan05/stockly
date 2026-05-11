@@ -1,7 +1,7 @@
 // src/controllers/productosController.js
-const Producto = require('../models/Producto');
-const Categoria = require('../models/Categoria');
-const cloudinary = require('../config/cloudinary');
+const Producto = require("../models/Producto");
+const Categoria = require("../models/Categoria");
+const cloudinary = require("../config/cloudinary");
 
 // GET /api/v1/productos
 const getProductos = async (req, res) => {
@@ -11,10 +11,10 @@ const getProductos = async (req, res) => {
     if (categoria) filtro.categoria = categoria;
 
     let productos = await Producto.find(filtro)
-      .populate('categoria', 'nombre')
+      .populate("categoria", "nombre")
       .sort({ nombre: 1 });
 
-    if (stockBajo === 'true') {
+    if (stockBajo === "true") {
       productos = productos.filter((p) => p.stockActual <= p.stockMinimo);
     }
 
@@ -27,9 +27,14 @@ const getProductos = async (req, res) => {
 // GET /api/v1/productos/:id
 const getProductoById = async (req, res) => {
   try {
-    const producto = await Producto.findById(req.params.id).populate('categoria', 'nombre');
+    const producto = await Producto.findById(req.params.id).populate(
+      "categoria",
+      "nombre",
+    );
     if (!producto || !producto.activo) {
-      return res.status(404).json({ ok: false, message: 'Producto no encontrado' });
+      return res
+        .status(404)
+        .json({ ok: false, message: "Producto no encontrado" });
     }
     res.json({ ok: true, data: producto });
   } catch (error) {
@@ -40,7 +45,10 @@ const getProductoById = async (req, res) => {
 // GET /api/v1/productos/stock-bajo
 const getProductosStockBajo = async (req, res) => {
   try {
-    const productos = await Producto.find({ activo: true }).populate('categoria', 'nombre');
+    const productos = await Producto.find({ activo: true }).populate(
+      "categoria",
+      "nombre",
+    );
     const stockBajo = productos.filter((p) => p.stockActual <= p.stockMinimo);
     res.json({ ok: true, total: stockBajo.length, data: stockBajo });
   } catch (error) {
@@ -51,7 +59,7 @@ const getProductosStockBajo = async (req, res) => {
 // POST /api/v1/productos
 const crearProducto = async (req, res) => {
   try {
-    const { nombre, descripcion, precio, stockActual, stockMinimo, categoria } = req.body;
+    const { nombre, marca, descripcion, precio, stockActual, stockMinimo, categoria } = req.body;
 
     if (!nombre || precio === undefined || !categoria) {
       // Si se subió imagen pero hay error de validación, eliminarla de Cloudinary
@@ -60,38 +68,47 @@ const crearProducto = async (req, res) => {
       }
       return res.status(400).json({
         ok: false,
-        message: 'nombre, precio y categoria son obligatorios',
+        message: "nombre, precio y categoria son obligatorios",
       });
     }
 
-    const categoriaExiste = await Categoria.findOne({ _id: categoria, activo: true });
+    const categoriaExiste = await Categoria.findOne({
+      _id: categoria,
+      activo: true,
+    });
     if (!categoriaExiste) {
       if (req.file) {
         await cloudinary.uploader.destroy(req.file.filename);
       }
       return res.status(400).json({
         ok: false,
-        message: 'La categoría no existe o está inactiva',
+        message: "La categoría no existe o está inactiva",
       });
     }
 
     const producto = new Producto({
       nombre: nombre.trim(),
+      marca: marca || "",
       descripcion,
       precio,
       stockActual: stockActual ?? 0,
       stockMinimo: stockMinimo ?? 5,
       categoria,
-      // Si se subió imagen, guardar URL y publicId
       imagen: req.file
         ? { url: req.file.path, publicId: req.file.filename }
-        : { url: '', publicId: '' },
+        : { url: "", publicId: "" },
     });
 
     await producto.save();
-    await producto.populate('categoria', 'nombre');
+    await producto.populate("categoria", "nombre");
 
-    res.status(201).json({ ok: true, message: 'Producto creado exitosamente', data: producto });
+    res
+      .status(201)
+      .json({
+        ok: true,
+        message: "Producto creado exitosamente",
+        data: producto,
+      });
   } catch (error) {
     if (req.file) {
       await cloudinary.uploader.destroy(req.file.filename);
@@ -103,7 +120,7 @@ const crearProducto = async (req, res) => {
 // PUT /api/v1/productos/:id
 const actualizarProducto = async (req, res) => {
   try {
-    const { nombre, descripcion, precio, stockMinimo, categoria, activo } = req.body;
+    const { nombre, marca, descripcion, precio, stockMinimo, categoria, activo } = req.body;
 
     const producto = await Producto.findById(req.params.id);
     if (!producto) {
@@ -127,13 +144,13 @@ const actualizarProducto = async (req, res) => {
     }
 
     if (nombre !== undefined) producto.nombre = nombre.trim();
+    if (marca !== undefined) producto.marca = marca;
     if (descripcion !== undefined) producto.descripcion = descripcion;
     if (precio !== undefined) producto.precio = precio;
     if (stockMinimo !== undefined) producto.stockMinimo = stockMinimo;
     if (categoria !== undefined) producto.categoria = categoria;
     if (activo !== undefined) producto.activo = activo;
 
-    // Si se sube nueva imagen, eliminar la anterior de Cloudinary
     if (req.file) {
       if (producto.imagen?.publicId) {
         await cloudinary.uploader.destroy(producto.imagen.publicId);
@@ -161,13 +178,15 @@ const eliminarProducto = async (req, res) => {
   try {
     const producto = await Producto.findById(req.params.id);
     if (!producto) {
-      return res.status(404).json({ ok: false, message: 'Producto no encontrado' });
+      return res
+        .status(404)
+        .json({ ok: false, message: "Producto no encontrado" });
     }
 
     producto.activo = false;
     await producto.save();
 
-    res.json({ ok: true, message: 'Producto eliminado correctamente' });
+    res.json({ ok: true, message: "Producto eliminado correctamente" });
   } catch (error) {
     res.status(500).json({ ok: false, message: error.message });
   }

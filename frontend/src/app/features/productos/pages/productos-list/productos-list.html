@@ -1,75 +1,138 @@
-<div class="container-fluid px-4 mt-4">
+<div class="list-wrapper">
 
-
-    <div class="row mb-3 align-items-center">
-        <div class="col">
-            <h3 class="fw-bold">
-                <i class="bi bi-box me-2"></i>Productos
-            </h3>
-            <p class="text-muted mb-0">Lista de productos registrados en el inventario.</p>
+    <!-- Encabezado -->
+    <div class="list-header">
+        <div>
+            <h1 class="page-title">Productos</h1>
+            <p class="page-subtitle">Catálogo de productos del inventario</p>
         </div>
-        <div class="col-auto">
-            <a routerLink="/productos/nuevo" class="btn btn-primary">
-                <i class="bi bi-plus-lg me-1"></i>Nuevo Producto
-            </a>
+        <a routerLink="/productos/nuevo" class="btn btn-dark btn-sm px-3">
+            <i class="bi bi-plus-lg me-1"></i>Nuevo
+        </a>
+    </div>
+
+    <!-- Filtros -->
+    <div class="filters-bar card-clean">
+        <div class="filters-inner">
+            <select class="form-select form-select-sm" [(ngModel)]="filtroCat" style="max-width:200px">
+                <option value="">Todas las categorías</option>
+                @for (cat of categorias; track cat._id) {
+                <option [value]="cat._id">{{ cat.nombre }}</option>
+                }
+            </select>
+            <select class="form-select form-select-sm" [(ngModel)]="filtroStock" style="max-width:180px">
+                <option value="">Todo el stock</option>
+                <option value="bajo">Stock bajo</option>
+            </select>
+            <button class="btn btn-dark btn-sm px-3" (click)="aplicarFiltros()">
+                Filtrar
+            </button>
+            @if (filtroCat || filtroStock) {
+            <button class="btn btn-outline-secondary btn-sm" (click)="limpiarFiltros()">
+                Limpiar
+            </button>
+            }
         </div>
     </div>
 
-
-    <div class="card border-0 shadow-sm">
-        <div class="card-body p-0">
-            <table class="table table-hover align-middle mb-0 text-center">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Código</th>
-                        <th>Nombre</th>
-                        <th>Categoría</th>
-                        <th class="text-center">Stock</th>
-                        <th>Precio</th>
-                        <th>Estado</th>
-                        <th class="text-center">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @for (producto of productos; track producto.id) {
-                    <tr>
-                        <td><span class="fw-semibold text-muted">{{ producto.codigo }}</span></td>
-                        <td class="fw-semibold">{{ producto.nombre }}</td>
-                        <td>
-                            <span class="badge bg-secondary bg-opacity-25 text-dark">
-                                {{ producto.categoria }}
-                            </span>
-                        </td>
-                        <td class="text-center">
-                            <span class="badge fs-6 px-3" [class.bg-danger]="producto.stock === 0"
-                                [class.bg-warning]="esStockBajo(producto.stock)"
-                                [class.text-dark]="esStockBajo(producto.stock)"
-                                [class.bg-success]="producto.stock >= 5">
-                                {{ producto.stock }}
-                            </span>
-                        </td>
-                        <td class="fw-semibold">${{ producto.precio.toFixed(2) }}</td>
-                        <td>
-                            <span class="badge" [class.bg-success]="producto.estado === 'Activo'"
-                                [class.bg-secondary]="producto.estado === 'Inactivo'">
-                                {{ producto.estado }}
-                            </span>
-                        </td>
-                        <td class="text-center">
-                            <a [routerLink]="['/productos/editar', producto.id]"
-                                class="btn btn-sm btn-outline-primary me-1">
-                                <i class="bi bi-pencil"></i>
-                            </a>
-                            <button class="btn btn-sm btn-outline-danger" (click)="eliminarProducto(producto.id)">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
+    <!-- Error -->
+    @if (error) {
+    <div class="alert-clean">
+        <i class="bi bi-exclamation-circle me-2"></i>{{ error }}
     </div>
+    }
 
+    <!-- Cargando -->
+    @if (cargando) {
+    <div class="text-center py-5">
+        <div class="spinner-border text-secondary" style="width:2rem;height:2rem"></div>
+    </div>
+    }
+
+    <!-- Grid de productos -->
+    @if (!cargando && productos.length > 0) {
+    <div class="productos-grid">
+        @for (p of productos; track p._id) {
+        <div class="producto-card card-clean">
+
+            <!-- Imagen -->
+            <div class="producto-img-wrap">
+                @if (getImagenUrl(p)) {
+                <img [src]="getImagenUrl(p)" [alt]="p.nombre" class="producto-img" />
+                } @else {
+                <div class="producto-img-placeholder">
+                    <i class="bi bi-box"></i>
+                </div>
+                }
+                <!-- Badge stock -->
+                <span class="stock-badge {{ getBadgeStock(p) }}">
+                    {{ p.stockActual }}
+                </span>
+            </div>
+
+            <!-- Info -->
+            <div class="producto-info">
+                <span class="producto-cat">{{ p.categoria.nombre }}</span>
+                <h3 class="producto-nombre">{{ p.nombre }}</h3>
+                <h3 class="producto-nombre">{{ p.nombre }}</h3>
+                @if (p.marca) {
+                <span class="producto-marca">{{ p.marca }}</span>
+                }
+                @if (p.descripcion) {
+                <p class="producto-desc">{{ p.descripcion }}</p>
+                }
+                <div class="producto-footer">
+                    <span class="producto-precio">${{ p.precio.toFixed(2) }}</span>
+                    <div class="producto-actions">
+                        <a [routerLink]="['/productos/editar', p._id]" class="btn-icon" title="Editar">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <button class="btn-icon btn-icon-danger" (click)="confirmarEliminar(p)" title="Eliminar">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        }
+    </div>
+    }
+
+    <!-- Sin resultados -->
+    @if (!cargando && productos.length === 0 && !error) {
+    <div class="empty-state">
+        <i class="bi bi-box empty-icon"></i>
+        <p class="empty-text">No hay productos registrados.</p>
+        <a routerLink="/productos/nuevo" class="btn btn-dark btn-sm px-4">
+            Agregar primero
+        </a>
+    </div>
+    }
 
 </div>
+
+<!-- Modal confirmar eliminación -->
+@if (productoAEliminar) {
+<div class="modal-overlay" (click)="cancelarEliminar()">
+    <div class="modal-box glass" (click)="$event.stopPropagation()">
+        <h5 class="modal-title">Eliminar producto</h5>
+        <p class="modal-body-text">
+            ¿Confirmas que deseas eliminar
+            <strong>{{ productoAEliminar.nombre }}</strong>?
+            Esta acción lo desactivará del inventario.
+        </p>
+        <div class="modal-actions">
+            <button class="btn btn-outline-secondary btn-sm" (click)="cancelarEliminar()" [disabled]="eliminando">
+                Cancelar
+            </button>
+            <button class="btn btn-danger btn-sm px-4" (click)="eliminar()" [disabled]="eliminando">
+                @if (eliminando) {
+                <span class="spinner-border spinner-border-sm me-1"></span>
+                }
+                Eliminar
+            </button>
+        </div>
+    </div>
+</div>
+}

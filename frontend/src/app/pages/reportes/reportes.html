@@ -1,0 +1,289 @@
+<div class="rep-wrapper">
+
+  <div class="list-header">
+    <div>
+      <h1 class="page-title">Reportes</h1>
+      <p class="page-subtitle">Consulta el estado del inventario</p>
+    </div>
+  </div>
+
+  @if (error) {
+    <div class="alert-clean">
+      <i class="bi bi-exclamation-circle me-2"></i>{{ error }}
+    </div>
+  }
+
+  <!-- Tabs -->
+  <div class="tabs-bar">
+    <button class="tab-btn" [class.active]="tabActiva === 'stock'"
+      (click)="cambiarTab('stock')">
+      Stock actual
+    </button>
+    <button class="tab-btn" [class.active]="tabActiva === 'stockBajo'"
+      (click)="cambiarTab('stockBajo')">
+      Stock bajo
+    </button>
+    <button class="tab-btn" [class.active]="tabActiva === 'movimientos'"
+      (click)="cambiarTab('movimientos')">
+      Movimientos
+    </button>
+  </div>
+
+  <!-- TAB: Stock actual -->
+  @if (tabActiva === 'stock') {
+    @if (cargandoStock) {
+      <div class="text-center py-5">
+        <div class="spinner-border text-secondary" style="width:2rem;height:2rem"></div>
+      </div>
+    }
+    @if (stockData) {
+      <!-- Resumen -->
+      <div class="resumen-grid">
+        <div class="resumen-card card-clean">
+          <span class="resumen-label">Total productos</span>
+          <span class="resumen-val">{{ stockData.resumen.totalProductos }}</span>
+        </div>
+        <div class="resumen-card card-clean">
+          <span class="resumen-label">Stock normal</span>
+          <span class="resumen-val" style="color:#16a34a">
+            {{ stockData.resumen.enStockNormal }}
+          </span>
+        </div>
+        <div class="resumen-card card-clean">
+          <span class="resumen-label">Stock bajo</span>
+          <span class="resumen-val" style="color:#d97706">
+            {{ stockData.resumen.enStockBajo }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Tabla -->
+      <div class="card-clean">
+        <table class="table-clean w-100">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Categoría</th>
+              <th class="text-center">Stock actual</th>
+              <th class="text-center">Stock mínimo</th>
+              <th>Precio</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of stockData.data; track item.id) {
+              <tr>
+                <td class="fw-semibold" style="font-size:0.88rem">{{ item.nombre }}</td>
+                <td style="font-size:0.82rem;color:#6b7280">{{ item.categoria }}</td>
+                <td class="text-center">
+                  <span class="{{ getBadgeStock(item) }}">{{ item.stockActual }}</span>
+                </td>
+                <td class="text-center" style="font-size:0.85rem;color:#9ca3af">
+                  {{ item.stockMinimo }}
+                </td>
+                <td style="font-size:0.88rem;font-weight:600">${{ item.precio.toFixed(2) }}</td>
+                <td>
+                  <span [class]="item.stockBajo ? 'badge-stock-low' : 'badge-stock-ok'">
+                    {{ item.stockBajo ? 'Bajo' : 'Normal' }}
+                  </span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  }
+
+  <!-- TAB: Stock bajo -->
+  @if (tabActiva === 'stockBajo') {
+    @if (cargandoStockBajo) {
+      <div class="text-center py-5">
+        <div class="spinner-border text-secondary" style="width:2rem;height:2rem"></div>
+      </div>
+    }
+    @if (stockBajoData) {
+      <div class="resumen-grid">
+        <div class="resumen-card card-clean">
+          <span class="resumen-label">Productos con stock bajo</span>
+          <span class="resumen-val" style="color:#d97706">
+            {{ stockBajoData.resumen.totalEnStockBajo }}
+          </span>
+        </div>
+        <div class="resumen-card card-clean">
+          <span class="resumen-label">Sin stock</span>
+          <span class="resumen-val" style="color:#dc2626">
+            {{ stockBajoData.resumen.criticos }}
+          </span>
+        </div>
+        <div class="resumen-card card-clean">
+          <span class="resumen-label">Stock bajo</span>
+          <span class="resumen-val" style="color:#d97706">
+            {{ stockBajoData.resumen.bajos }}
+          </span>
+        </div>
+      </div>
+
+      @if (stockBajoData.data.length === 0) {
+        <div class="empty-state">
+          <i class="bi bi-check-circle empty-icon" style="color:#16a34a"></i>
+          <p class="empty-text">Todos los productos tienen stock suficiente.</p>
+        </div>
+      } @else {
+        <div class="card-clean">
+          <table class="table-clean w-100">
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Categoría</th>
+                <th class="text-center">Stock actual</th>
+                <th class="text-center">Stock mínimo</th>
+                <th class="text-center">Unidades faltantes</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of stockBajoData.data; track item.id) {
+                <tr>
+                  <td class="fw-semibold" style="font-size:0.88rem">{{ item.nombre }}</td>
+                  <td style="font-size:0.82rem;color:#6b7280">{{ item.categoria }}</td>
+                  <td class="text-center">
+                    <span [class]="item.critico ? 'badge-stock-empty' : 'badge-stock-low'">
+                      {{ item.stockActual }}
+                    </span>
+                  </td>
+                  <td class="text-center" style="font-size:0.85rem;color:#9ca3af">
+                    {{ item.stockMinimo }}
+                  </td>
+                  <td class="text-center fw-bold" style="color:#dc2626">
+                    {{ item.unidadesFaltantes }}
+                  </td>
+                  <td>
+                    <span [class]="item.critico ? 'badge-stock-empty' : 'badge-stock-low'">
+                      {{ item.critico ? 'Sin stock' : 'Stock bajo' }}
+                    </span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    }
+  }
+
+  <!-- TAB: Movimientos -->
+  @if (tabActiva === 'movimientos') {
+    <!-- Filtros -->
+    <div class="card-clean filters-card">
+      <div class="filters-inner">
+        <div>
+          <label class="form-label">Desde</label>
+          <input type="date" class="form-control form-control-sm"
+            [(ngModel)]="filtroDesde" />
+        </div>
+        <div>
+          <label class="form-label">Hasta</label>
+          <input type="date" class="form-control form-control-sm"
+            [(ngModel)]="filtroHasta" />
+        </div>
+        <div>
+          <label class="form-label">Tipo</label>
+          <select class="form-select form-select-sm" [(ngModel)]="filtroTipo"
+            style="min-width:140px">
+            <option value="">Todos</option>
+            <option value="entrada">Entradas</option>
+            <option value="salida">Salidas</option>
+          </select>
+        </div>
+        <button class="btn btn-dark btn-sm px-3 align-self-end"
+          (click)="aplicarFiltrosMov()">
+          Consultar
+        </button>
+      </div>
+    </div>
+
+    @if (cargandoMov) {
+      <div class="text-center py-5">
+        <div class="spinner-border text-secondary" style="width:2rem;height:2rem"></div>
+      </div>
+    }
+
+    @if (movData) {
+      <div class="resumen-grid">
+        <div class="resumen-card card-clean">
+          <span class="resumen-label">Total movimientos</span>
+          <span class="resumen-val">{{ movData.resumen.totalMovimientos }}</span>
+        </div>
+        <div class="resumen-card card-clean">
+          <span class="resumen-label">Entradas</span>
+          <span class="resumen-val" style="color:#16a34a">
+            {{ movData.resumen.totalEntradas }}
+          </span>
+        </div>
+        <div class="resumen-card card-clean">
+          <span class="resumen-label">Salidas</span>
+          <span class="resumen-val" style="color:#dc2626">
+            {{ movData.resumen.totalSalidas }}
+          </span>
+        </div>
+      </div>
+
+      @if (movData.data.length === 0) {
+        <div class="empty-state">
+          <i class="bi bi-arrow-left-right empty-icon"></i>
+          <p class="empty-text">Sin movimientos en el período seleccionado.</p>
+        </div>
+      } @else {
+        <div class="card-clean">
+          <table class="table-clean w-100">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Producto</th>
+                <th>Tipo</th>
+                <th class="text-center">Cantidad</th>
+                <th class="text-center">Anterior</th>
+                <th class="text-center">Resultante</th>
+                <th>Motivo</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (mov of movData.data; track mov._id) {
+                <tr>
+                  <td style="font-size:0.8rem;color:#9ca3af">
+                    {{ mov.createdAt | date:'dd/MM/yyyy HH:mm' }}
+                  </td>
+                  <td class="fw-semibold" style="font-size:0.88rem">
+                    {{ mov.producto?.nombre }}
+                  </td>
+                  <td>
+                    <span class="tipo-badge"
+                      [class.tipo-entrada]="mov.tipo === 'entrada'"
+                      [class.tipo-salida]="mov.tipo === 'salida'">
+                      {{ mov.tipo | titlecase }}
+                    </span>
+                  </td>
+                  <td class="text-center fw-bold"
+                    [style.color]="mov.tipo === 'entrada' ? '#16a34a' : '#dc2626'">
+                    {{ mov.tipo === 'entrada' ? '+' : '-' }}{{ mov.cantidad }}
+                  </td>
+                  <td class="text-center" style="font-size:0.85rem;color:#9ca3af">
+                    {{ mov.stockAnterior }}
+                  </td>
+                  <td class="text-center fw-semibold" style="font-size:0.85rem">
+                    {{ mov.stockResultante }}
+                  </td>
+                  <td style="font-size:0.82rem;color:#6b7280">
+                    {{ mov.motivo || '—' }}
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    }
+  }
+
+</div>

@@ -8,6 +8,11 @@ const productoSchema = new mongoose.Schema(
       required: [true, 'El nombre del producto es obligatorio'],
       trim: true,
     },
+    marca: {
+      type: String,
+      trim: true,
+      default: '',
+    },
     descripcion: { type: String, trim: true, default: '' },
     precio: {
       type: Number,
@@ -21,11 +26,10 @@ const productoSchema = new mongoose.Schema(
       ref: 'Categoria',
       required: [true, 'La categoría es obligatoria'],
     },
-    // Imagen 
     imagen: {
       url: { type: String, default: '' },
-      publicId: { type: String, default: '' }, // Para poder eliminarla de Cloudinary
-    }, 
+      publicId: { type: String, default: '' },
+    },
     activo: { type: Boolean, default: true },
   },
   { timestamps: true }

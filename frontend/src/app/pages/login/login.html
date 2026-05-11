@@ -1,28 +1,64 @@
-<div class="vh-100 d-flex align-items-center justify-content-center fondo-login">
-    <div class="card shadow-lg border-0 card-round" style="width: 420px;">
-        <div class="card-header bg-dark text-white text-center py-4 ">
-            <i class="bi bi-box-seam fs-1"></i>
-            <h4 class="mt-2 mb-0 fw-bold">StockAdmin</h4>
-            <p class="text-secondary mb-0 small">Sistema de Inventario</p>
-        </div>
-        <div class="card-body p-4">
-            <div class="mb-3">
-                <label class="form-label fw-semibold">
-                    <i class="bi bi-person me-1"></i>Usuario
-                </label>
-                <input type="text" class="form-control form-control-lg" placeholder="Ingresa tu usuario"
-                    [(ngModel)]="usuario" name="usuario" />
-            </div>
-            <div class="mb-4">
-                <label class="form-label fw-semibold">
-                    <i class="bi bi-lock me-1"></i>Contraseña
-                </label>
-                <input type="password" class="form-control form-control-lg" placeholder="Ingresa tu contraseña"
-                    [(ngModel)]="password" name="password" />
-            </div>
-            <button class="btn btn-dark w-100 fw-bold btn-lg" (click)="iniciarSesion()">
-                <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
-            </button>
-        </div>
+<div class="login-bg">
+  <div class="login-card glass">
+
+    <div class="d-flex align-items-center gap-3 mb-2">
+      <div class="brand-icon">
+        <i class="bi bi-box-seam"></i>
+      </div>
+      <div>
+        <div class="brand-name">Stockly</div>
+        <div class="brand-tagline">Control de inventario</div>
+      </div>
     </div>
+
+    <div class="divider"></div>
+
+    @if (errorMsg) {
+      <div class="error-msg mb-3">
+        <i class="bi bi-exclamation-circle me-2"></i>{{ errorMsg }}
+      </div>
+    }
+
+    <div class="mb-3">
+      <label class="form-label">Correo electrónico</label>
+      <input
+        type="email"
+        class="form-control"
+        placeholder="usuario@stockly.com"
+        [(ngModel)]="email"
+        [disabled]="cargando"
+      />
+    </div>
+
+    <div class="mb-4">
+      <label class="form-label">Contraseña</label>
+      <div class="position-relative">
+        <input
+          [type]="mostrarPassword ? 'text' : 'password'"
+          class="form-control"
+          placeholder="••••••••"
+          [(ngModel)]="password"
+          [disabled]="cargando"
+          (keyup.enter)="iniciarSesion()"
+        />
+        <button
+          type="button"
+          class="btn btn-link position-absolute end-0 top-50 translate-middle-y pe-3 text-muted"
+          style="font-size:0.85rem"
+          (click)="mostrarPassword = !mostrarPassword"
+        >
+          <i class="bi" [class.bi-eye]="!mostrarPassword" [class.bi-eye-slash]="mostrarPassword"></i>
+        </button>
+      </div>
+    </div>
+
+    <button class="btn-login" (click)="iniciarSesion()" [disabled]="cargando">
+      @if (cargando) {
+        <span class="spinner-border spinner-border-sm me-2"></span>Iniciando...
+      } @else {
+        Iniciar sesión
+      }
+    </button>
+
+  </div>
 </div>
