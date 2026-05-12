@@ -13,21 +13,22 @@
 
   <!-- Error global -->
   @if (error) {
-    <div class="alert-clean">
-      <i class="bi bi-exclamation-circle me-2"></i>{{ error }}
-    </div>
+  <div class="alert-clean">
+    <i class="bi bi-exclamation-circle me-2"></i>{{ error }}
+  </div>
   }
 
   <!-- Cargando -->
   @if (cargando) {
-    <div class="text-center py-5">
-      <div class="spinner-border text-secondary" style="width:2rem;height:2rem"></div>
-    </div>
+  <div class="text-center py-5">
+    <div class="spinner-border text-secondary" style="width:2rem;height:2rem"></div>
+  </div>
   }
 
   <!-- Tabla -->
   @if (!cargando && categorias.length > 0) {
-    <div class="card-clean">
+  <div class="card-clean">
+    <div class="table-responsive-custom">
       <table class="table-clean w-100">
         <thead>
           <tr>
@@ -40,123 +41,115 @@
         </thead>
         <tbody>
           @for (cat of categorias; track cat._id) {
-            <tr>
-              <td class="fw-semibold" style="font-size:0.9rem">{{ cat.nombre }}</td>
-              <td style="font-size:0.85rem;color:#6b7280">
-                {{ cat.descripcion || '—' }}
-              </td>
-              <td>
-                <span [class]="cat.activo ? 'badge-active' : 'badge-inactive'">
-                  {{ cat.activo ? 'Activa' : 'Inactiva' }}
-                </span>
-              </td>
-              <td style="font-size:0.8rem;color:#9ca3af">
-                {{ cat.createdAt | date:'dd/MM/yyyy' }}
-              </td>
-              <td class="text-end">
-                <div class="d-flex gap-2 justify-content-end">
-                  <button class="btn-icon" (click)="abrirModalEditar(cat)" title="Editar">
-                    <i class="bi bi-pencil"></i>
-                  </button>
-                  <button class="btn-icon btn-icon-danger"
-                    (click)="confirmarEliminar(cat)" title="Eliminar">
-                    <i class="bi bi-trash"></i>
-                  </button>
-                </div>
-              </td>
-            </tr>
+          <tr>
+            <td class="fw-semibold" style="font-size:0.9rem">{{ cat.nombre }}</td>
+            <td style="font-size:0.85rem;color:#6b7280">
+              {{ cat.descripcion || '—' }}
+            </td>
+            <td>
+              <span [class]="cat.activo ? 'badge-active' : 'badge-inactive'">
+                {{ cat.activo ? 'Activa' : 'Inactiva' }}
+              </span>
+            </td>
+            <td style="font-size:0.8rem;color:#9ca3af">
+              {{ cat.createdAt | date:'dd/MM/yyyy' }}
+            </td>
+            <td class="text-end">
+              <div class="d-flex gap-2 justify-content-end">
+                <button class="btn-icon" (click)="abrirModalEditar(cat)" title="Editar">
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button class="btn-icon btn-icon-danger" (click)="confirmarEliminar(cat)" title="Eliminar">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
           }
         </tbody>
       </table>
     </div>
+  </div>
   }
 
   <!-- Sin resultados -->
   @if (!cargando && categorias.length === 0 && !error) {
-    <div class="empty-state">
-      <i class="bi bi-tag empty-icon"></i>
-      <p class="empty-text">No hay categorías registradas.</p>
-      <button class="btn btn-dark btn-sm px-4" (click)="abrirModalNueva()">
-        Crear primera
-      </button>
-    </div>
+  <div class="empty-state">
+    <i class="bi bi-tag empty-icon"></i>
+    <p class="empty-text">No hay categorías registradas.</p>
+    <button class="btn btn-dark btn-sm px-4" (click)="abrirModalNueva()">
+      Crear primera
+    </button>
+  </div>
   }
 
 </div>
 
 <!-- Modal crear/editar -->
 @if (modalAbierto) {
-  <div class="modal-overlay" (click)="cerrarModal()">
-    <div class="modal-box glass" (click)="$event.stopPropagation()">
-      <div class="modal-header-custom">
-        <h5 class="modal-title">
-          {{ esEdicion ? 'Editar categoría' : 'Nueva categoría' }}
-        </h5>
-        <button class="btn-icon" (click)="cerrarModal()">
-          <i class="bi bi-x-lg"></i>
-        </button>
-      </div>
+<div class="modal-overlay" (click)="cerrarModal()">
+  <div class="modal-box glass" (click)="$event.stopPropagation()">
+    <div class="modal-header-custom">
+      <h5 class="modal-title">
+        {{ esEdicion ? 'Editar categoría' : 'Nueva categoría' }}
+      </h5>
+      <button class="btn-icon" (click)="cerrarModal()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
 
-      @if (formError) {
-        <div class="alert-clean mb-3">
-          <i class="bi bi-exclamation-circle me-2"></i>{{ formError }}
-        </div>
-      }
+    @if (formError) {
+    <div class="alert-clean mb-3">
+      <i class="bi bi-exclamation-circle me-2"></i>{{ formError }}
+    </div>
+    }
 
-      <div class="mb-3">
-        <label class="form-label">Nombre</label>
-        <input type="text" class="form-control"
-          placeholder="Ej: Electrónica"
-          [(ngModel)]="form.nombre" />
-      </div>
-      <div class="mb-4">
-        <label class="form-label">Descripción</label>
-        <textarea class="form-control" rows="2"
-          placeholder="Descripción opcional..."
-          [(ngModel)]="form.descripcion">
+    <div class="mb-3">
+      <label class="form-label">Nombre</label>
+      <input type="text" class="form-control" placeholder="Ej: Electrónica" [(ngModel)]="form.nombre" />
+    </div>
+    <div class="mb-4">
+      <label class="form-label">Descripción</label>
+      <textarea class="form-control" rows="2" placeholder="Descripción opcional..." [(ngModel)]="form.descripcion">
         </textarea>
-      </div>
+    </div>
 
-      <div class="modal-actions">
-        <button class="btn btn-outline-secondary btn-sm"
-          (click)="cerrarModal()" [disabled]="guardando">
-          Cancelar
-        </button>
-        <button class="btn btn-dark btn-sm px-4"
-          (click)="guardar()" [disabled]="guardando">
-          @if (guardando) {
-            <span class="spinner-border spinner-border-sm me-1"></span>
-          }
-          {{ esEdicion ? 'Actualizar' : 'Guardar' }}
-        </button>
-      </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline-secondary btn-sm" (click)="cerrarModal()" [disabled]="guardando">
+        Cancelar
+      </button>
+      <button class="btn btn-dark btn-sm px-4" (click)="guardar()" [disabled]="guardando">
+        @if (guardando) {
+        <span class="spinner-border spinner-border-sm me-1"></span>
+        }
+        {{ esEdicion ? 'Actualizar' : 'Guardar' }}
+      </button>
     </div>
   </div>
+</div>
 }
 
 <!-- Modal eliminar -->
 @if (categoriaAEliminar) {
-  <div class="modal-overlay" (click)="cancelarEliminar()">
-    <div class="modal-box glass" (click)="$event.stopPropagation()">
-      <h5 class="modal-title">Eliminar categoría</h5>
-      <p class="modal-body-text">
-        ¿Confirmas eliminar
-        <strong>{{ categoriaAEliminar.nombre }}</strong>?
-        Los productos de esta categoría no serán afectados.
-      </p>
-      <div class="modal-actions">
-        <button class="btn btn-outline-secondary btn-sm"
-          (click)="cancelarEliminar()" [disabled]="eliminando">
-          Cancelar
-        </button>
-        <button class="btn btn-danger btn-sm px-4"
-          (click)="eliminar()" [disabled]="eliminando">
-          @if (eliminando) {
-            <span class="spinner-border spinner-border-sm me-1"></span>
-          }
-          Eliminar
-        </button>
-      </div>
+<div class="modal-overlay" (click)="cancelarEliminar()">
+  <div class="modal-box glass" (click)="$event.stopPropagation()">
+    <h5 class="modal-title">Eliminar categoría</h5>
+    <p class="modal-body-text">
+      ¿Confirmas eliminar
+      <strong>{{ categoriaAEliminar.nombre }}</strong>?
+      Los productos de esta categoría no serán afectados.
+    </p>
+    <div class="modal-actions">
+      <button class="btn btn-outline-secondary btn-sm" (click)="cancelarEliminar()" [disabled]="eliminando">
+        Cancelar
+      </button>
+      <button class="btn btn-danger btn-sm px-4" (click)="eliminar()" [disabled]="eliminando">
+        @if (eliminando) {
+        <span class="spinner-border spinner-border-sm me-1"></span>
+        }
+        Eliminar
+      </button>
     </div>
   </div>
+</div>
 }

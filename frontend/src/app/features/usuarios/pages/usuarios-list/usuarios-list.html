@@ -6,24 +6,32 @@
       <p class="page-subtitle">Gestión de cuentas del sistema</p>
     </div>
     <button class="btn btn-dark btn-sm px-3" (click)="abrirModalCrear()">
-      <i class="bi bi-plus-lg me-1"></i>Nuevo usuario
+      <i class="bi bi-plus-lg me-1"></i>
+      Nuevo usuario
     </button>
   </div>
 
   @if (error) {
-    <div class="alert-clean">
-      <i class="bi bi-exclamation-circle me-2"></i>{{ error }}
-    </div>
+  <div class="alert-clean">
+    <i class="bi bi-exclamation-circle me-2"></i>
+    {{ error }}
+  </div>
   }
 
   @if (cargando) {
-    <div class="text-center py-5">
-      <div class="spinner-border text-secondary" style="width:2rem;height:2rem"></div>
+  <div class="text-center py-5">
+    <div class="spinner-border text-secondary" style="width:2rem;height:2rem">
     </div>
+  </div>
   }
 
   @if (!cargando && usuarios.length > 0) {
-    <div class="card-clean">
+
+  <div class="card-clean">
+
+    <!-- CONTENEDOR RESPONSIVE -->
+    <div class="table-responsive-custom">
+
       <table class="table-clean w-100">
         <thead>
           <tr>
@@ -37,213 +45,247 @@
         </thead>
         <tbody>
           @for (u of usuarios; track u._id) {
-            <tr>
-              <td>
-                <div class="d-flex align-items-center gap-2">
-                  <div class="user-avatar-sm">
-                    {{ u.nombre.charAt(0).toUpperCase() }}
-                  </div>
-                  <span class="fw-semibold" style="font-size:0.88rem">
-                    {{ u.nombre }}
-                    @if (esMiCuenta(u)) {
-                      <span class="yo-badge">Tú</span>
-                    }
-                  </span>
+
+          <tr>
+
+            <td>
+              <div class="d-flex align-items-center gap-2">
+
+                <div class="user-avatar-sm">
+                  {{ u.nombre.charAt(0).toUpperCase() }}
                 </div>
-              </td>
-              <td style="font-size:0.84rem;color:#6b7280">{{ u.email }}</td>
-              <td>
-                <span [class]="u.rol === 'admin' ? 'rol-admin' : 'rol-empleado'">
-                  {{ u.rol }}
-                </span>
-              </td>
-              <td>
-                <span [class]="u.activo ? 'badge-active' : 'badge-inactive'">
-                  {{ u.activo ? 'Activo' : 'Inactivo' }}
-                </span>
-              </td>
-              <td style="font-size:0.8rem;color:#9ca3af">
-                {{ u.createdAt | date:'dd/MM/yyyy' }}
-              </td>
-              <td>
-                <div class="d-flex gap-2 justify-content-end">
-                  @if (puedeEditar(u)) {
-                    <button class="btn-icon" (click)="abrirModalEditar(u)" title="Editar">
-                      <i class="bi bi-pencil"></i>
-                    </button>
+
+                <span class="fw-semibold" style="font-size:0.88rem">
+
+                  {{ u.nombre }}
+
+                  @if (esMiCuenta(u)) {
+                  <span class="yo-badge">Tú</span>
                   }
-                  @if (!esMiCuenta(u) && u.rol !== 'admin') {
-                    @if (u.activo) {
-                      <button class="btn-icon btn-icon-danger"
-                        (click)="confirmarAccion(u, 'desactivar')" title="Desactivar">
-                        <i class="bi bi-slash-circle"></i>
-                      </button>
-                    } @else {
-                      <button class="btn-icon btn-icon-success"
-                        (click)="confirmarAccion(u, 'reactivar')" title="Reactivar">
-                        <i class="bi bi-check-circle"></i>
-                      </button>
-                    }
-                  }
-                </div>
-              </td>
-            </tr>
+
+                </span>
+
+              </div>
+            </td>
+
+            <td style="font-size:0.84rem;color:#6b7280">
+              {{ u.email }}
+            </td>
+
+            <td>
+              <span [class]="u.rol === 'admin'
+                    ? 'rol-admin'
+                    : 'rol-empleado'">
+
+                {{ u.rol }}
+
+              </span>
+            </td>
+
+            <td>
+              <span [class]="u.activo
+                    ? 'badge-active'
+                    : 'badge-inactive'">
+
+                {{ u.activo ? 'Activo' : 'Inactivo' }}
+
+              </span>
+            </td>
+
+            <td style="font-size:0.8rem;color:#9ca3af">
+              {{ u.createdAt | date:'dd/MM/yyyy' }}
+            </td>
+
+            <td>
+
+              <div class="d-flex gap-2 justify-content-end">
+
+                @if (puedeEditar(u)) {
+
+                <button class="btn-icon" (click)="abrirModalEditar(u)" title="Editar">
+
+                  <i class="bi bi-pencil"></i>
+
+                </button>
+
+                }
+
+                @if (!esMiCuenta(u) && u.rol !== 'admin') {
+
+                @if (u.activo) {
+
+                <button class="btn-icon btn-icon-danger" (click)="confirmarAccion(u, 'desactivar')" title="Desactivar">
+
+                  <i class="bi bi-slash-circle"></i>
+
+                </button>
+
+                } @else {
+
+                <button class="btn-icon btn-icon-success" (click)="confirmarAccion(u, 'reactivar')" title="Reactivar">
+
+                  <i class="bi bi-check-circle"></i>
+
+                </button>
+
+                }
+
+                }
+
+              </div>
+
+            </td>
+
+          </tr>
           }
         </tbody>
       </table>
     </div>
+  </div>
   }
 
   @if (!cargando && usuarios.length === 0 && !error) {
-    <div class="empty-state">
-      <i class="bi bi-people empty-icon"></i>
-      <p class="empty-text">No hay usuarios registrados.</p>
-    </div>
+
+  <div class="empty-state">
+
+    <i class="bi bi-people empty-icon"></i>
+
+    <p class="empty-text">
+      No hay usuarios registrados.
+    </p>
+
+  </div>
+
   }
 
 </div>
 
 <!-- Modal Crear -->
 @if (modalCrearAbierto) {
-  <div class="modal-overlay" (click)="cerrarModalCrear()">
-    <div class="modal-box glass" (click)="$event.stopPropagation()">
-      <div class="modal-header-custom">
-        <h5 class="modal-title">Nuevo usuario</h5>
-        <button class="btn-icon" (click)="cerrarModalCrear()">
-          <i class="bi bi-x-lg"></i>
-        </button>
-      </div>
+<div class="modal-overlay" (click)="cerrarModalCrear()">
+  <div class="modal-box glass" (click)="$event.stopPropagation()">
+    <div class="modal-header-custom">
+      <h5 class="modal-title">Nuevo usuario</h5>
+      <button class="btn-icon" (click)="cerrarModalCrear()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
 
-      @if (formError) {
-        <div class="alert-clean mb-3">
-          <i class="bi bi-exclamation-circle me-2"></i>{{ formError }}
-        </div>
-      }
+    @if (formError) {
+    <div class="alert-clean mb-3">
+      <i class="bi bi-exclamation-circle me-2"></i>{{ formError }}
+    </div>
+    }
 
-      <div class="mb-3">
-        <label class="form-label">Nombre</label>
-        <input type="text" class="form-control"
-          placeholder="Nombre completo"
-          [(ngModel)]="formCrear.nombre" />
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Email</label>
-        <input type="email" class="form-control"
-          placeholder="correo@ejemplo.com"
-          [(ngModel)]="formCrear.email" />
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Contraseña</label>
-        <input type="password" class="form-control"
-          placeholder="Mínimo 8 caracteres"
-          [(ngModel)]="formCrear.password" />
-      </div>
-      <div class="mb-4">
-        <label class="form-label">Rol</label>
-        <select class="form-select" [(ngModel)]="formCrear.rol">
-          <option value="empleado">Empleado</option>
-          <option value="admin">Administrador</option>
-        </select>
-      </div>
+    <div class="mb-3">
+      <label class="form-label">Nombre</label>
+      <input type="text" class="form-control" placeholder="Nombre completo" [(ngModel)]="formCrear.nombre" />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Email</label>
+      <input type="email" class="form-control" placeholder="correo@ejemplo.com" [(ngModel)]="formCrear.email" />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Contraseña</label>
+      <input type="password" class="form-control" placeholder="Mínimo 8 caracteres" [(ngModel)]="formCrear.password" />
+    </div>
+    <div class="mb-4">
+      <label class="form-label">Rol</label>
+      <select class="form-select" [(ngModel)]="formCrear.rol">
+        <option value="empleado">Empleado</option>
+        <option value="admin">Administrador</option>
+      </select>
+    </div>
 
-      <div class="modal-actions">
-        <button class="btn btn-outline-secondary btn-sm"
-          (click)="cerrarModalCrear()" [disabled]="guardando">
-          Cancelar
-        </button>
-        <button class="btn btn-dark btn-sm px-4"
-          (click)="crear()" [disabled]="guardando">
-          @if (guardando) {
-            <span class="spinner-border spinner-border-sm me-1"></span>
-          }
-          Crear
-        </button>
-      </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline-secondary btn-sm" (click)="cerrarModalCrear()" [disabled]="guardando">
+        Cancelar
+      </button>
+      <button class="btn btn-dark btn-sm px-4" (click)="crear()" [disabled]="guardando">
+        @if (guardando) {
+        <span class="spinner-border spinner-border-sm me-1"></span>
+        }
+        Crear
+      </button>
     </div>
   </div>
+</div>
 }
 
 <!-- Modal Editar -->
 @if (modalEditarAbierto && usuarioEditando) {
-  <div class="modal-overlay" (click)="cerrarModalEditar()">
-    <div class="modal-box glass" (click)="$event.stopPropagation()">
-      <div class="modal-header-custom">
-        <h5 class="modal-title">Editar usuario</h5>
-        <button class="btn-icon" (click)="cerrarModalEditar()">
-          <i class="bi bi-x-lg"></i>
-        </button>
-      </div>
+<div class="modal-overlay" (click)="cerrarModalEditar()">
+  <div class="modal-box glass" (click)="$event.stopPropagation()">
+    <div class="modal-header-custom">
+      <h5 class="modal-title">Editar usuario</h5>
+      <button class="btn-icon" (click)="cerrarModalEditar()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
 
-      @if (formError) {
-        <div class="alert-clean mb-3">
-          <i class="bi bi-exclamation-circle me-2"></i>{{ formError }}
-        </div>
-      }
+    @if (formError) {
+    <div class="alert-clean mb-3">
+      <i class="bi bi-exclamation-circle me-2"></i>{{ formError }}
+    </div>
+    }
 
-      <div class="mb-3">
-        <label class="form-label">Nombre</label>
-        <input type="text" class="form-control"
-          [(ngModel)]="formEditar.nombre" />
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Email</label>
-        <input type="email" class="form-control"
-          [(ngModel)]="formEditar.email" />
-      </div>
-      <div class="mb-4">
-        <label class="form-label">Nueva contraseña</label>
-        <input type="password" class="form-control"
-          placeholder="Dejar vacío para no cambiar"
-          [(ngModel)]="formEditar.password" />
-        <small class="text-muted">Solo si deseas cambiarla.</small>
-      </div>
+    <div class="mb-3">
+      <label class="form-label">Nombre</label>
+      <input type="text" class="form-control" [(ngModel)]="formEditar.nombre" />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Email</label>
+      <input type="email" class="form-control" [(ngModel)]="formEditar.email" />
+    </div>
+    <div class="mb-4">
+      <label class="form-label">Nueva contraseña</label>
+      <input type="password" class="form-control" placeholder="Dejar vacío para no cambiar"
+        [(ngModel)]="formEditar.password" />
+      <small class="text-muted">Solo si deseas cambiarla.</small>
+    </div>
 
-      <div class="modal-actions">
-        <button class="btn btn-outline-secondary btn-sm"
-          (click)="cerrarModalEditar()" [disabled]="guardando">
-          Cancelar
-        </button>
-        <button class="btn btn-dark btn-sm px-4"
-          (click)="actualizar()" [disabled]="guardando">
-          @if (guardando) {
-            <span class="spinner-border spinner-border-sm me-1"></span>
-          }
-          Actualizar
-        </button>
-      </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline-secondary btn-sm" (click)="cerrarModalEditar()" [disabled]="guardando">
+        Cancelar
+      </button>
+      <button class="btn btn-dark btn-sm px-4" (click)="actualizar()" [disabled]="guardando">
+        @if (guardando) {
+        <span class="spinner-border spinner-border-sm me-1"></span>
+        }
+        Actualizar
+      </button>
     </div>
   </div>
+</div>
 }
 
 <!-- Modal Confirmar acción -->
 @if (usuarioAccion) {
-  <div class="modal-overlay" (click)="cancelarAccion()">
-    <div class="modal-box glass" (click)="$event.stopPropagation()">
-      <h5 class="modal-title">
-        {{ accion === 'desactivar' ? 'Desactivar usuario' : 'Reactivar usuario' }}
-      </h5>
-      <p class="modal-body-text">
-        ¿Confirmas que deseas
-        {{ accion === 'desactivar' ? 'desactivar' : 'reactivar' }} a
-        <strong>{{ usuarioAccion.nombre }}</strong>?
-        @if (accion === 'desactivar') {
-          El usuario no podrá iniciar sesión.
+<div class="modal-overlay" (click)="cancelarAccion()">
+  <div class="modal-box glass" (click)="$event.stopPropagation()">
+    <h5 class="modal-title">
+      {{ accion === 'desactivar' ? 'Desactivar usuario' : 'Reactivar usuario' }}
+    </h5>
+    <p class="modal-body-text">
+      ¿Confirmas que deseas
+      {{ accion === 'desactivar' ? 'desactivar' : 'reactivar' }} a
+      <strong>{{ usuarioAccion.nombre }}</strong>?
+      @if (accion === 'desactivar') {
+      El usuario no podrá iniciar sesión.
+      }
+    </p>
+    <div class="modal-actions">
+      <button class="btn btn-outline-secondary btn-sm" (click)="cancelarAccion()" [disabled]="procesando">
+        Cancelar
+      </button>
+      <button [class]="accion === 'desactivar' ? 'btn btn-danger btn-sm px-4' : 'btn btn-success btn-sm px-4'"
+        (click)="ejecutarAccion()" [disabled]="procesando">
+        @if (procesando) {
+        <span class="spinner-border spinner-border-sm me-1"></span>
         }
-      </p>
-      <div class="modal-actions">
-        <button class="btn btn-outline-secondary btn-sm"
-          (click)="cancelarAccion()" [disabled]="procesando">
-          Cancelar
-        </button>
-        <button
-          [class]="accion === 'desactivar' ? 'btn btn-danger btn-sm px-4' : 'btn btn-success btn-sm px-4'"
-          (click)="ejecutarAccion()" [disabled]="procesando">
-          @if (procesando) {
-            <span class="spinner-border spinner-border-sm me-1"></span>
-          }
-          {{ accion === 'desactivar' ? 'Desactivar' : 'Reactivar' }}
-        </button>
-      </div>
+        {{ accion === 'desactivar' ? 'Desactivar' : 'Reactivar' }}
+      </button>
     </div>
   </div>
+</div>
 }

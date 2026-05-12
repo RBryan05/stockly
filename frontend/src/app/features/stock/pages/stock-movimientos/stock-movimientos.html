@@ -12,14 +12,14 @@
     <h6 class="section-title">Registrar movimiento</h6>
 
     @if (formError) {
-      <div class="alert-clean mb-3">
-        <i class="bi bi-exclamation-circle me-2"></i>{{ formError }}
-      </div>
+    <div class="alert-clean mb-3">
+      <i class="bi bi-exclamation-circle me-2"></i>{{ formError }}
+    </div>
     }
     @if (exito) {
-      <div class="alert-success mb-3">
-        <i class="bi bi-check-circle me-2"></i>{{ exito }}
-      </div>
+    <div class="alert-success mb-3">
+      <i class="bi bi-check-circle me-2"></i>{{ exito }}
+    </div>
     }
 
     <div class="row g-3">
@@ -29,13 +29,13 @@
         <select class="form-select" [(ngModel)]="form.producto">
           <option value="">Selecciona...</option>
           @for (p of productos; track p._id) {
-            <option [value]="p._id">{{ p.nombre }}</option>
+          <option [value]="p._id">{{ p.nombre }}</option>
           }
         </select>
         @if (getProductoSeleccionado()) {
-          <small class="text-muted">
-            Stock actual: <strong>{{ getProductoSeleccionado()!.stockActual }}</strong>
-          </small>
+        <small class="text-muted">
+          Stock actual: <strong>{{ getProductoSeleccionado()!.stockActual }}</strong>
+        </small>
         }
       </div>
 
@@ -49,24 +49,21 @@
 
       <div class="col-md-2">
         <label class="form-label">Cantidad</label>
-        <input type="number" class="form-control"
-          min="1" [(ngModel)]="form.cantidad" />
+        <input type="number" class="form-control" min="1" [(ngModel)]="form.cantidad" />
       </div>
 
       <div class="col-md-4">
         <label class="form-label">Motivo</label>
-        <input type="text" class="form-control"
-          placeholder="Ej: Compra proveedor, venta..."
+        <input type="text" class="form-control" placeholder="Ej: Compra proveedor, venta..."
           [(ngModel)]="form.motivo" />
       </div>
 
     </div>
 
     <div class="form-footer">
-      <button class="btn btn-dark btn-sm px-4"
-        (click)="registrar()" [disabled]="registrando">
+      <button class="btn btn-dark btn-sm px-4" (click)="registrar()" [disabled]="registrando">
         @if (registrando) {
-          <span class="spinner-border spinner-border-sm me-1"></span>
+        <span class="spinner-border spinner-border-sm me-1"></span>
         }
         Registrar
       </button>
@@ -84,38 +81,39 @@
       <select class="form-select form-select-sm" [(ngModel)]="filtroProd" style="max-width:220px">
         <option value="">Todos los productos</option>
         @for (p of productos; track p._id) {
-          <option [value]="p._id">{{ p.nombre }}</option>
+        <option [value]="p._id">{{ p.nombre }}</option>
         }
       </select>
       <button class="btn btn-dark btn-sm px-3" (click)="aplicarFiltros()">
         Filtrar
       </button>
       @if (filtroTipo || filtroProd) {
-        <button class="btn btn-outline-secondary btn-sm" (click)="limpiarFiltros()">
-          Limpiar
-        </button>
+      <button class="btn btn-outline-secondary btn-sm" (click)="limpiarFiltros()">
+        Limpiar
+      </button>
       }
     </div>
   </div>
 
   <!-- Error -->
   @if (error) {
-    <div class="alert-clean">
-      <i class="bi bi-exclamation-circle me-2"></i>{{ error }}
-    </div>
+  <div class="alert-clean">
+    <i class="bi bi-exclamation-circle me-2"></i>{{ error }}
+  </div>
   }
 
   <!-- Cargando -->
   @if (cargando) {
-    <div class="text-center py-5">
-      <div class="spinner-border text-secondary" style="width:2rem;height:2rem"></div>
-    </div>
+  <div class="text-center py-5">
+    <div class="spinner-border text-secondary" style="width:2rem;height:2rem"></div>
+  </div>
   }
 
   <!-- Historial -->
   @if (!cargando && movimientos.length > 0) {
-    <div class="card-clean">
-      <h6 class="section-title px-4 pt-4 mb-0">Historial</h6>
+  <div class="card-clean">
+    <h6 class="section-title px-4 pt-4 mb-0">Historial</h6>
+    <div class="table-responsive-custom">
       <table class="table-clean w-100">
         <thead>
           <tr>
@@ -130,50 +128,48 @@
         </thead>
         <tbody>
           @for (mov of movimientos; track mov._id) {
-            <tr>
-              <td style="font-size:0.8rem;color:#9ca3af">
-                {{ mov.createdAt | date:'dd/MM/yyyy HH:mm' }}
-              </td>
-              <td class="fw-semibold" style="font-size:0.88rem">
-                {{ mov.producto.nombre }}
-              </td>
-              <td>
-                <span class="tipo-badge"
-                  [class.tipo-entrada]="mov.tipo === 'entrada'"
-                  [class.tipo-salida]="mov.tipo === 'salida'">
-                  <i class="bi me-1"
-                    [class.bi-arrow-down]="mov.tipo === 'entrada'"
-                    [class.bi-arrow-up]="mov.tipo === 'salida'">
-                  </i>
-                  {{ mov.tipo | titlecase }}
-                </span>
-              </td>
-              <td class="text-center fw-bold"
-                [style.color]="mov.tipo === 'entrada' ? '#16a34a' : '#dc2626'">
-                {{ mov.tipo === 'entrada' ? '+' : '-' }}{{ mov.cantidad }}
-              </td>
-              <td class="text-center" style="font-size:0.85rem;color:#9ca3af">
-                {{ mov.stockAnterior }}
-              </td>
-              <td class="text-center fw-semibold" style="font-size:0.85rem">
-                {{ mov.stockResultante }}
-              </td>
-              <td style="font-size:0.82rem;color:#6b7280">
-                {{ mov.motivo || '—' }}
-              </td>
-            </tr>
+          <tr>
+            <td style="font-size:0.8rem;color:#9ca3af">
+              {{ mov.createdAt | date:'dd/MM/yyyy HH:mm' }}
+            </td>
+            <td class="fw-semibold" style="font-size:0.88rem">
+              {{ mov.producto.nombre }}
+            </td>
+            <td>
+              <span class="tipo-badge" [class.tipo-entrada]="mov.tipo === 'entrada'"
+                [class.tipo-salida]="mov.tipo === 'salida'">
+                <i class="bi me-1" [class.bi-arrow-down]="mov.tipo === 'entrada'"
+                  [class.bi-arrow-up]="mov.tipo === 'salida'">
+                </i>
+                {{ mov.tipo | titlecase }}
+              </span>
+            </td>
+            <td class="text-center fw-bold" [style.color]="mov.tipo === 'entrada' ? '#16a34a' : '#dc2626'">
+              {{ mov.tipo === 'entrada' ? '+' : '-' }}{{ mov.cantidad }}
+            </td>
+            <td class="text-center" style="font-size:0.85rem;color:#9ca3af">
+              {{ mov.stockAnterior }}
+            </td>
+            <td class="text-center fw-semibold" style="font-size:0.85rem">
+              {{ mov.stockResultante }}
+            </td>
+            <td style="font-size:0.82rem;color:#6b7280">
+              {{ mov.motivo || '—' }}
+            </td>
+          </tr>
           }
         </tbody>
       </table>
     </div>
+  </div>
   }
 
   <!-- Sin resultados -->
   @if (!cargando && movimientos.length === 0 && !error) {
-    <div class="empty-state">
-      <i class="bi bi-arrow-left-right empty-icon"></i>
-      <p class="empty-text">Sin movimientos registrados.</p>
-    </div>
+  <div class="empty-state">
+    <i class="bi bi-arrow-left-right empty-icon"></i>
+    <p class="empty-text">Sin movimientos registrados.</p>
+  </div>
   }
 
 </div>

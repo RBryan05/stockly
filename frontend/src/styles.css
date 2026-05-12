@@ -203,3 +203,60 @@ body {
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+
+.table-responsive-custom {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ancho mínimo para activar scroll */
+.table-clean {
+  min-width: 850px;
+  border-collapse: collapse;
+}
+
+/* scrollbar */
+.table-responsive-custom::-webkit-scrollbar {
+  height: 6px;
+}
+
+.table-responsive-custom::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 20px;
+}
+
+.table-responsive-custom::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+
+@media (max-width: 768px) {
+
+  .list-header {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .page-title {
+    font-size: 1.4rem;
+  }
+
+  .page-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .card-clean {
+    padding: 0.75rem;
+    overflow: hidden;
+  }
+
+  .table-clean th,
+  .table-clean td {
+    white-space: nowrap;
+  }
+
+}
