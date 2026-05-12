@@ -1,30 +1,114 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-
+import { FormsModule } from '@angular/forms';
+import { ProductosService, Producto } from '../../../../core/services/productos.service';
+import { CategoriasService } from '../../../../core/services/categorias.service';
 
 @Component({
   selector: 'app-productos-list',
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, FormsModule],
   templateUrl: './productos-list.html',
   styleUrl: './productos-list.css',
 })
-export class ProductosList {
-  productos = [
-    { id: 1, codigo: 'P001', nombre: 'Laptop Dell', categoria: 'Electrónica', stock: 15, precio: 850.00, estado: 'Activo' },
-    { id: 2, codigo: 'P002', nombre: 'Mouse Logitech', categoria: 'Periféricos', stock: 3, precio: 25.00, estado: 'Activo' },
-    { id: 3, codigo: 'P003', nombre: 'Teclado Mecánico', categoria: 'Periféricos', stock: 0, precio: 75.00, estado: 'Inactivo' },
-    { id: 4, codigo: 'P004', nombre: 'Monitor LG 24"', categoria: 'Electrónica', stock: 8, precio: 320.00, estado: 'Activo' },
-    { id: 5, codigo: 'P005', nombre: 'Silla Ergonómica', categoria: 'Mobiliario', stock: 2, precio: 450.00, estado: 'Activo' },
-  ];
+export class ProductosList implements OnInit {
+  productos: Producto[] = [];
+  categorias: any[] = [];
+  cargando = true;
+  error = '';
+  filtroCat = '';
+  filtroStock = '';
+  productoAEliminar: Producto | null = null;
+  eliminando = false;
 
+  constructor(
+    private productosService: ProductosService,
+    private categoriasService: CategoriasService,
+    private cdr: ChangeDetectorRef,
+  ) {}
 
-  eliminarProducto(id: number) {
-    this.productos = this.productos.filter(p => p.id !== id);
+  ngOnInit() {
+    this.cargarCategorias();
+    this.cargarProductos();
   }
 
+  cargarCategorias() {
+    this.categoriasService.getCategorias().subscribe({
+      next: (res) => {
+        this.categorias = res.data;
+        this.cdr.detectChanges();
+      },
+      error: () => {},
+    });
+  }
 
-  esStockBajo(stock: number): boolean {
-    return stock > 0 && stock < 5;
+  cargarProductos() {
+    this.cargando = true;
+    const params: Record<string, string> = {};
+    if (this.filtroCat) params['categoria'] = this.filtroCat;
+    if (this.filtroStock === 'bajo') params['stockBajo'] = 'true';
+
+    this.productosService.getProductos(params).subscribe({
+      next: (res) => {
+        this.productos = res.data;
+        this.cargando = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.error = err.error?.message || 'Error al cargar productos.';
+        this.cargando = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  aplicarFiltros() {
+    this.cargarProductos();
+  }
+
+  limpiarFiltros() {
+    this.filtroCat = '';
+    this.filtroStock = '';
+    this.cargarProductos();
+  }
+
+  confirmarEliminar(producto: Producto) {
+    this.productoAEliminar = producto;
+    this.cdr.detectChanges();
+  }
+
+  cancelarEliminar() {
+    this.productoAEliminar = null;
+    this.cdr.detectChanges();
+  }
+
+  eliminar() {
+    if (!this.productoAEliminar) return;
+    this.eliminando = true;
+    this.productosService.eliminarProducto(this.productoAEliminar._id).subscribe({
+      next: () => {
+        this.productos = this.productos.filter(
+          (p) => p._id !== this.productoAEliminar!._id,
+        );
+        this.productoAEliminar = null;
+        this.eliminando = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.error = err.error?.message || 'Error al eliminar.';
+        this.eliminando = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  getImagenUrl(producto: Producto): string {
+    return producto.imagen?.url || '';
+  }
+
+  getBadgeStock(p: Producto): string {
+    if (p.stockActual === 0) return 'badge-stock-empty';
+    if (p.stockActual <= p.stockMinimo) return 'badge-stock-low';
+    return 'badge-stock-ok';
   }
 }

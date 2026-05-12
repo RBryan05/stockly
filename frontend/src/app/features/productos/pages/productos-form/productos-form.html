@@ -1,120 +1,138 @@
-<div class="container-fluid px-4 mt-4">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
+<div class="form-wrapper">
 
+    <div class="form-header">
+        <a routerLink="/productos" class="btn-back">
+            <i class="bi bi-arrow-left me-1"></i>Volver
+        </a>
+        <div>
+            <h1 class="page-title">{{ esEdicion ? 'Editar producto' : 'Nuevo producto' }}</h1>
+            <p class="page-subtitle">{{ esEdicion ? 'Actualiza los datos del producto' : 'Completa el formulario para
+                registrar un producto' }}</p>
+        </div>
+    </div>
 
-            <div class="mb-3 d-flex justify-content-end">
-                <a routerLink="/productos" class="btn btn-outline-secondary btn-sm">
-                    <i class="bi bi-arrow-left me-1"></i>Volver a Productos
-                </a>
-            </div>
+    @if (cargandoDatos) {
+    <div class="text-center py-5">
+        <div class="spinner-border text-secondary" style="width:2rem;height:2rem"></div>
+    </div>
+    }
 
+    @if (!cargandoDatos) {
+    <div class="form-grid">
 
-            <div class="card border-0 shadow-sm mb-5">
-                <div class="card-header bg-dark text-white py-3">
-                    <h5 class="mb-0 fw-bold">
-                        <i class="bi bi-plus-circle me-2"></i>Nuevo Producto
-                    </h5>
-                </div>
-                <div class="card-body p-4">
-                    <div class="row g-3">
+        <!-- Columna izquierda: imagen -->
+        <div class="col-imagen">
+            <div class="card-clean imagen-card">
+                <span class="form-label d-block mb-3">Imagen del producto</span>
 
-
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Código</label>
-                            <div class="input-group">
-                                <span class="input-group-text">
-                                    <i class="bi bi-hash"></i>
-                                </span>
-                                <input type="text" class="form-control" placeholder="Ej: P001"
-                                    [(ngModel)]="producto.codigo" name="codigo" />
-                            </div>
-                        </div>
-
-
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Nombre</label>
-                            <div class="input-group">
-                                <span class="input-group-text">
-                                    <i class="bi bi-box"></i>
-                                </span>
-                                <input type="text" class="form-control" placeholder="Nombre del producto"
-                                    [(ngModel)]="producto.nombre" name="nombre" />
-                            </div>
-                        </div>
-
-
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Categoría</label>
-                            <div class="input-group">
-                                <span class="input-group-text">
-                                    <i class="bi bi-tag"></i>
-                                </span>
-                                <select class="form-select" [(ngModel)]="producto.categoria" name="categoria">
-                                    <option value="">Selecciona una categoría</option>
-                                    @for (cat of categorias; track cat) {
-                                    <option [value]="cat">{{ cat }}</option>
-                                    }
-                                </select>
-                            </div>
-                        </div>
-
-
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Stock Inicial</label>
-                            <div class="input-group">
-                                <span class="input-group-text">
-                                    <i class="bi bi-layers"></i>
-                                </span>
-                                <input type="number" class="form-control" [(ngModel)]="producto.stock" name="stock"
-                                    min="0" />
-                            </div>
-                        </div>
-
-
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Precio ($)</label>
-                            <div class="input-group">
-                                <span class="input-group-text">$</span>
-                                <input type="number" class="form-control" [(ngModel)]="producto.precio" name="precio"
-                                    min="0" step="0.01" />
-                            </div>
-                        </div>
-
-
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Estado</label>
-                            <div class="input-group">
-                                <span class="input-group-text">
-                                    <i class="bi bi-toggle-on"></i>
-                                </span>
-                                <select class="form-select" [(ngModel)]="producto.estado" name="estado">
-                                    <option value="Activo">Activo</option>
-                                    <option value="Inactivo">Inactivo</option>
-                                </select>
-                            </div>
-                        </div>
-
-
-                        <div class="col-12">
-                            <label class="form-label fw-semibold">Descripción</label>
-                            <textarea class="form-control" rows="3" placeholder="Descripción del producto..."
-                                [(ngModel)]="producto.descripcion" name="descripcion">
-                            </textarea>
-                        </div>
-
-
+                <div class="imagen-drop" (click)="fileInput.click()">
+                    @if (imagenPreview) {
+                    <img [src]="imagenPreview" alt="Preview" class="imagen-preview" />
+                    } @else {
+                    <div class="imagen-placeholder">
+                        <i class="bi bi-image"></i>
+                        <span>Subir imagen</span>
+                        <span class="imagen-hint">JPG, PNG o WEBP — máx. 5MB</span>
                     </div>
+                    }
                 </div>
-                <div class="card-footer bg-transparent d-flex justify-content-center gap-4 py-3">
-                    <button class="btn btn-primary fw-bold" (click)="guardar()">
-                        <i class="bi bi-floppy me-1"></i>Guardar
+
+                <input #fileInput type="file" accept="image/jpeg,image/png,image/webp" class="d-none"
+                    (change)="onImagenSeleccionada($event)" />
+
+                <div class="imagen-btns">
+                    <button type="button" class="btn btn-outline-secondary btn-sm w-100" (click)="fileInput.click()">
+                        {{ imagenPreview ? 'Cambiar imagen' : 'Seleccionar' }}
                     </button>
-                    <button class="btn btn-outline-secondary" (click)="cancelar()">
-                        <i class="bi bi-x-lg me-1"></i>Cancelar
+                    @if (imagenPreview) {
+                    <button type="button" class="btn btn-outline-danger btn-sm w-100" (click)="quitarImagen()">
+                        Quitar
                     </button>
+                    }
                 </div>
             </div>
         </div>
+
+        <!-- Columna derecha: datos -->
+        <div class="col-datos">
+            <div class="card-clean datos-card">
+
+                @if (error) {
+                <div class="alert-clean mb-4">
+                    <i class="bi bi-exclamation-circle me-2"></i>{{ error }}
+                </div>
+                }
+
+                <div class="row g-3">
+
+                    <div class="col-12">
+                        <label class="form-label">Nombre</label>
+                        <input type="text" class="form-control" placeholder="Nombre del producto"
+                            [(ngModel)]="form.nombre" />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Marca</label>
+                        <input type="text" class="form-control" placeholder="Ej: Samsung, Nike, HP..."
+                            [(ngModel)]="form.marca" />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Categoría</label>
+                        <select class="form-select" [(ngModel)]="form.categoria">
+                            <option value="">Selecciona...</option>
+                            @for (cat of categorias; track cat._id) {
+                            <option [value]="cat._id">{{ cat.nombre }}</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Precio ($)</label>
+                        <input type="number" class="form-control" min="0" step="0.01" [(ngModel)]="form.precio" />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Stock inicial</label>
+                        <input type="number" class="form-control" min="0" [(ngModel)]="form.stockActual"
+                            [disabled]="esEdicion" />
+                        @if (esEdicion) {
+                        <small class="text-muted">
+                            El stock se gestiona desde Movimientos.
+                        </small>
+                        }
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Stock mínimo</label>
+                        <input type="number" class="form-control" min="0" [(ngModel)]="form.stockMinimo" />
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label">Descripción</label>
+                        <textarea class="form-control" rows="3" placeholder="Descripción opcional..."
+                            [(ngModel)]="form.descripcion">
+              </textarea>
+                    </div>
+
+                </div>
+
+                <div class="form-footer">
+                    <button class="btn btn-outline-secondary btn-sm" (click)="cancelar()" [disabled]="cargando">
+                        Cancelar
+                    </button>
+                    <button class="btn btn-dark btn-sm px-4" (click)="guardar()" [disabled]="cargando">
+                        @if (cargando) {
+                        <span class="spinner-border spinner-border-sm me-1"></span>
+                        }
+                        {{ esEdicion ? 'Actualizar' : 'Guardar' }}
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
     </div>
+    }
+
 </div>

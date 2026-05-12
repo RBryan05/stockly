@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { Navbar } from './layout/navbar/navbar';
 import { CommonModule } from '@angular/common';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -10,9 +11,13 @@ import { CommonModule } from '@angular/common';
   styleUrl: './app.css',
 })
 export class App {
-  constructor(public router: Router) {}
+  mostrarNavbar = false;
 
-  get mostrarNavbar(): boolean {
-    return this.router.url !== '/login';
+  constructor(private router: Router) {
+    this.router.events
+      .pipe(filter(e => e instanceof NavigationEnd))
+      .subscribe((e: NavigationEnd) => {
+        this.mostrarNavbar = e.urlAfterRedirects !== '/login';
+      });
   }
 }

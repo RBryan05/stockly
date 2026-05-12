@@ -1,150 +1,175 @@
-<div class="container px-4 mt-4">
+<div class="mov-wrapper">
 
+  <div class="list-header">
+    <div>
+      <h1 class="page-title">Movimientos</h1>
+      <p class="page-subtitle">Registra entradas y salidas del inventario</p>
+    </div>
+  </div>
 
-    <div class="row mb-3">
-        <div class="col">
-            <h3 class="fw-bold">
-                <i class="bi bi-arrow-left-right me-2"></i>Movimientos de Stock
-            </h3>
-            <p class="text-muted mb-0">Registra entradas y salidas del inventario.</p>
-        </div>
+  <!-- Formulario -->
+  <div class="card-clean form-card">
+    <h6 class="section-title">Registrar movimiento</h6>
+
+    @if (formError) {
+    <div class="alert-clean mb-3">
+      <i class="bi bi-exclamation-circle me-2"></i>{{ formError }}
+    </div>
+    }
+    @if (exito) {
+    <div class="alert-success mb-3">
+      <i class="bi bi-check-circle me-2"></i>{{ exito }}
+    </div>
+    }
+
+    <div class="row g-3">
+
+      <div class="col-md-4">
+        <label class="form-label">Producto</label>
+        <select class="form-select" [(ngModel)]="form.producto">
+          <option value="">Selecciona...</option>
+          @for (p of productos; track p._id) {
+          <option [value]="p._id">{{ p.nombre }}</option>
+          }
+        </select>
+        @if (getProductoSeleccionado()) {
+        <small class="text-muted">
+          Stock actual: <strong>{{ getProductoSeleccionado()!.stockActual }}</strong>
+        </small>
+        }
+      </div>
+
+      <div class="col-md-2">
+        <label class="form-label">Tipo</label>
+        <select class="form-select" [(ngModel)]="form.tipo">
+          <option value="entrada">Entrada</option>
+          <option value="salida">Salida</option>
+        </select>
+      </div>
+
+      <div class="col-md-2">
+        <label class="form-label">Cantidad</label>
+        <input type="number" class="form-control" min="1" [(ngModel)]="form.cantidad" />
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Motivo</label>
+        <input type="text" class="form-control" placeholder="Ej: Compra proveedor, venta..."
+          [(ngModel)]="form.motivo" />
+      </div>
+
     </div>
 
-
-    <!-- Formulario nuevo movimiento -->
-    <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-dark text-white py-3">
-            <h6 class="mb-0 fw-bold">
-                <i class="bi bi-plus-circle me-2"></i>Registrar Movimiento
-            </h6>
-        </div>
-        <div class="card-body p-4">
-            <div class="row g-3">
-
-
-                <div class="col-md-6">
-                    <label class="form-label fw-semibold">Producto</label>
-                    <div class="input-group">
-                        <span class="input-group-text">
-                            <i class="bi bi-box"></i>
-                        </span>
-                        <select class="form-select" [(ngModel)]="nuevoMovimiento.producto" name="producto">
-                            <option value="">Selecciona un producto</option>
-                            @for (p of productos; track p) {
-                            <option [value]="p">{{ p }}</option>
-                            }
-                        </select>
-                    </div>
-                </div>
-
-
-                <div class="col-md-6">
-                    <label class="form-label fw-semibold">Tipo</label>
-                    <div class="input-group">
-                        <span class="input-group-text">
-                            <i class="bi bi-arrow-down-up"></i>
-                        </span>
-                        <select class="form-select" [(ngModel)]="nuevoMovimiento.tipo" name="tipo">
-                            <option value="Entrada">Entrada</option>
-                            <option value="Salida">Salida</option>
-                        </select>
-                    </div>
-                </div>
-
-
-                <div class="col-md-6">
-                    <label class="form-label fw-semibold">Cantidad</label>
-                    <div class="input-group">
-                        <span class="input-group-text">
-                            <i class="bi bi-123"></i>
-                        </span>
-                        <input type="number" class="form-control" min="1" [(ngModel)]="nuevoMovimiento.cantidad"
-                            name="cantidad" />
-                    </div>
-                </div>
-
-
-                <div class="col-md-6">
-                    <label class="form-label fw-semibold">Responsable</label>
-                    <div class="input-group">
-                        <span class="input-group-text">
-                            <i class="bi bi-person"></i>
-                        </span>
-                        <input type="text" class="form-control" placeholder="Nombre del responsable"
-                            [(ngModel)]="nuevoMovimiento.responsable" name="responsable" />
-                    </div>
-                </div>
-
-
-                <div class="col-12">
-                    <label class="form-label fw-semibold">Observación</label>
-                    <div class="input-group">
-                        <span class="input-group-text">
-                            <i class="bi bi-chat-text"></i>
-                        </span>
-                        <input type="text" class="form-control" placeholder="Motivo del movimiento"
-                            [(ngModel)]="nuevoMovimiento.observacion" name="observacion" />
-                    </div>
-                </div>
-
-
-                <div class="col-12 text-center">
-                    <button class="btn btn-primary fw-bold px-4" (click)="registrarMovimiento()">
-                        <i class="bi bi-floppy me-1"></i>Registrar
-                    </button>
-                </div>
-
-
-            </div>
-        </div>
+    <div class="form-footer">
+      <button class="btn btn-dark btn-sm px-4" (click)="registrar()" [disabled]="registrando">
+        @if (registrando) {
+        <span class="spinner-border spinner-border-sm me-1"></span>
+        }
+        Registrar
+      </button>
     </div>
+  </div>
 
-
-    <!-- Historial -->
-    <div class="card border-0 shadow-sm mb-5">
-        <div class="card-header bg-white py-3">
-            <h6 class="mb-0 fw-bold">
-                <i class="bi bi-clock-history me-2"></i>Historial de Movimientos
-            </h6>
-        </div>
-        <div class="card-body p-0 text-center">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Fecha</th>
-                        <th>Producto</th>
-                        <th>Tipo</th>
-                        <th class="text-center">Cantidad</th>
-                        <th>Responsable</th>
-                        <th>Observación</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @for (mov of movimientos; track mov.id) {
-                    <tr>
-                        <td>
-                            <i class="bi bi-calendar3 me-1 text-muted"></i>
-                            {{ mov.fecha }}
-                        </td>
-                        <td class="fw-semibold">{{ mov.producto }}</td>
-                        <td>
-                            <span class="badge px-3" [class.bg-success]="mov.tipo === 'Entrada'"
-                                [class.bg-danger]="mov.tipo === 'Salida'">
-                                <i class="bi me-1" [class.bi-box-arrow-in-down]="mov.tipo === 'Entrada'"
-                                    [class.bi-box-arrow-up]="mov.tipo === 'Salida'">
-                                </i>
-                                {{ mov.tipo }}
-                            </span>
-                        </td>
-                        <td class="text-center fw-bold">{{ mov.cantidad }}</td>
-                        <td>{{ mov.responsable }}</td>
-                        <td class="text-muted">{{ mov.observacion }}</td>
-                    </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
+  <!-- Filtros historial -->
+  <div class="filters-bar card-clean">
+    <div class="filters-inner">
+      <select class="form-select form-select-sm" [(ngModel)]="filtroTipo" style="max-width:160px">
+        <option value="">Todos los tipos</option>
+        <option value="entrada">Entradas</option>
+        <option value="salida">Salidas</option>
+      </select>
+      <select class="form-select form-select-sm" [(ngModel)]="filtroProd" style="max-width:220px">
+        <option value="">Todos los productos</option>
+        @for (p of productos; track p._id) {
+        <option [value]="p._id">{{ p.nombre }}</option>
+        }
+      </select>
+      <button class="btn btn-dark btn-sm px-3" (click)="aplicarFiltros()">
+        Filtrar
+      </button>
+      @if (filtroTipo || filtroProd) {
+      <button class="btn btn-outline-secondary btn-sm" (click)="limpiarFiltros()">
+        Limpiar
+      </button>
+      }
     </div>
+  </div>
 
+  <!-- Error -->
+  @if (error) {
+  <div class="alert-clean">
+    <i class="bi bi-exclamation-circle me-2"></i>{{ error }}
+  </div>
+  }
+
+  <!-- Cargando -->
+  @if (cargando) {
+  <div class="text-center py-5">
+    <div class="spinner-border text-secondary" style="width:2rem;height:2rem"></div>
+  </div>
+  }
+
+  <!-- Historial -->
+  @if (!cargando && movimientos.length > 0) {
+  <div class="card-clean">
+    <h6 class="section-title px-4 pt-4 mb-0">Historial</h6>
+    <div class="table-responsive-custom">
+      <table class="table-clean w-100">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Producto</th>
+            <th>Tipo</th>
+            <th class="text-center">Cantidad</th>
+            <th class="text-center">Anterior</th>
+            <th class="text-center">Resultante</th>
+            <th>Motivo</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (mov of movimientos; track mov._id) {
+          <tr>
+            <td style="font-size:0.8rem;color:#9ca3af">
+              {{ mov.createdAt | date:'dd/MM/yyyy HH:mm' }}
+            </td>
+            <td class="fw-semibold" style="font-size:0.88rem">
+              {{ mov.producto.nombre }}
+            </td>
+            <td>
+              <span class="tipo-badge" [class.tipo-entrada]="mov.tipo === 'entrada'"
+                [class.tipo-salida]="mov.tipo === 'salida'">
+                <i class="bi me-1" [class.bi-arrow-down]="mov.tipo === 'entrada'"
+                  [class.bi-arrow-up]="mov.tipo === 'salida'">
+                </i>
+                {{ mov.tipo | titlecase }}
+              </span>
+            </td>
+            <td class="text-center fw-bold" [style.color]="mov.tipo === 'entrada' ? '#16a34a' : '#dc2626'">
+              {{ mov.tipo === 'entrada' ? '+' : '-' }}{{ mov.cantidad }}
+            </td>
+            <td class="text-center" style="font-size:0.85rem;color:#9ca3af">
+              {{ mov.stockAnterior }}
+            </td>
+            <td class="text-center fw-semibold" style="font-size:0.85rem">
+              {{ mov.stockResultante }}
+            </td>
+            <td style="font-size:0.82rem;color:#6b7280">
+              {{ mov.motivo || '—' }}
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+  }
+
+  <!-- Sin resultados -->
+  @if (!cargando && movimientos.length === 0 && !error) {
+  <div class="empty-state">
+    <i class="bi bi-arrow-left-right empty-icon"></i>
+    <p class="empty-text">Sin movimientos registrados.</p>
+  </div>
+  }
 
 </div>
