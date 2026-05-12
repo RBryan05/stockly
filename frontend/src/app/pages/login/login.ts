@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 
+import { environment } from '../../../environments/environment';
+
 @Component({
   selector: 'app-login',
   imports: [FormsModule, CommonModule],
@@ -34,20 +36,27 @@ export class Login {
     this.cargando = true;
     this.cdr.detectChanges();
 
-    this.http.post<any>('http://localhost:5000/api/v1/auth/login', {
+    this.http.post<any>(`${environment.apiUrl}/api/v1/auth/login`, {
       email: this.email,
       password: this.password,
     }).subscribe({
       next: (res) => {
         localStorage.setItem('token', res.token);
         localStorage.setItem('usuario', JSON.stringify(res.usuario));
+
         this.cargando = false;
         this.cdr.detectChanges();
+
         this.router.navigate(['/dashboard']);
       },
       error: (err) => {
         this.cargando = false;
-        this.errorMsg = err.error?.mensaje || err.error?.message || 'Credenciales incorrectas.';
+
+        this.errorMsg =
+          err.error?.mensaje ||
+          err.error?.message ||
+          'Credenciales incorrectas.';
+
         this.cdr.detectChanges();
       }
     });
