@@ -36,7 +36,7 @@ export class Login {
     this.cargando = true;
     this.cdr.detectChanges();
 
-    this.http.post<any>(`${environment.apiUrl}/api/v1/auth/login`, {
+    this.http.post<any>(`${environment.apiUrl}/auth/login`, {
       email: this.email,
       password: this.password,
     }).subscribe({
