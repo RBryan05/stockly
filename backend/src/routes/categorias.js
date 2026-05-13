@@ -7,6 +7,7 @@ const {
   crearCategoria,
   actualizarCategoria,
   eliminarCategoria,
+  reactivarCategoria,
 } = require('../controllers/categoriasController');
 
 router.get('/', getCategorias);
@@ -14,5 +15,6 @@ router.get('/:id', getCategoriaById);
 router.post('/', crearCategoria);
 router.put('/:id', actualizarCategoria);
 router.delete('/:id', eliminarCategoria);
+router.patch('/:id/reactivar', reactivarCategoria);
 
 module.exports = router;
