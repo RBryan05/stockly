@@ -119,17 +119,28 @@ export class CategoriasList implements OnInit {
 
     this.categoriasService.eliminarCategoria(this.categoriaAEliminar._id).subscribe({
       next: () => {
-        this.categorias = this.categorias.filter(
-          (c) => c._id !== this.categoriaAEliminar!._id,
-        );
         this.categoriaAEliminar = null;
         this.eliminando = false;
         this.cdr.detectChanges();
+        this.cargarCategorias(); // ← recargar del backend en lugar de filtrar localmente
       },
       error: (err: any) => {
         this.error = err.error?.message || 'Error al eliminar.';
         this.eliminando = false;
         this.categoriaAEliminar = null;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  reactivar(cat: Categoria) {
+    this.categoriasService.reactivarCategoria(cat._id).subscribe({
+      next: () => {
+        this.cargarCategorias();
+        this.cdr.detectChanges();
+      },
+      error: (err: any) => {
+        this.error = err.error?.message || 'Error al reactivar.';
         this.cdr.detectChanges();
       },
     });
