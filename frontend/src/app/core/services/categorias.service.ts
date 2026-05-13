@@ -34,4 +34,8 @@ export class CategoriasService {
   eliminarCategoria(id: string): Observable<any> {
     return this.api.delete(`categorias/${id}`);
   }
+
+  reactivarCategoria(id: string): Observable<any> {
+    return this.api.patch(`categorias/${id}/reactivar`, {});
+  }
 }
